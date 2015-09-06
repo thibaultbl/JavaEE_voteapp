@@ -1,29 +1,50 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <parent>
-  	<groupId>fr.sgr.formation.spring.voteapp</groupId>
-  	<artifactId>voteapp</artifactId>
-  	<version>0.0.1-SNAPSHOT</version>
-  </parent>
-  
-  <artifactId>voteapp-webapp</artifactId>
-  
-  <name>VoteApp-webapp</name>
-  <description>Application Web de gestion d'élections.</description>
-  
-  <packaging>war</packaging>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-        	<!-- Le fichier descripteur web.xml est maintenant optionnel -->
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.sgr.formation.spring.voteapp</groupId>
+		<artifactId>voteapp</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>voteapp-webapp</artifactId>
+
+	<name>VoteApp-webapp</name>
+	<description>Application Web de gestion d'élections.</description>
+
+	<packaging>war</packaging>
+
+	<dependencies>
+		<dependency>
+			<!-- Dépendance pour disposer des classes nécessaires pour créer une application 
+				Web à base de servlets -->
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<!-- Librairie mise à disposition par le serveur d'applications -->
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<!-- Outillage commons-lang3 -->
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<!-- Le fichier descripteur web.xml est maintenant optionnel -->
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
