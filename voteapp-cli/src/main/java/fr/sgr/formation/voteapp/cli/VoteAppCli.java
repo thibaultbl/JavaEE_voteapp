@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class VoteAppCli implements CommandLineRunner {
@@ -43,7 +44,7 @@ public class VoteAppCli implements CommandLineRunner {
 		}
 
 		/** Appel du service. */
-		appelerServiceAddition(operande1, operande2);
+		appelerServiceViaSpring(operande1, operande2);
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class VoteAppCli implements CommandLineRunner {
 	 */
 	private void appelerServiceAddition(double operande1, double operande2) {
 		try {
-			URL url = new URL(URL_SERVICE_ADDITION + "?op1=" + operande1 + "&op2=" + operande2);
+			URL url = new URL(URL_SERVICE_ADDITION + "?format=json&op1=" + operande1 + "&op2=" + operande2);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
 			// Méthode HTTP à utiliser
@@ -82,5 +83,19 @@ public class VoteAppCli implements CommandLineRunner {
 		} catch (IOException e) {
 			log.error("Erreur de lecture de la réponse.", e);
 		}
+	}
+
+	/**
+	 * Appel du service d'addition via un template Spring.
+	 * 
+	 * @param operande1
+	 * @param operande2
+	 */
+	private void appelerServiceViaSpring(double operande1, double operande2) {
+		RestTemplate restTemplate = new RestTemplate();
+		ReponseAddition res = restTemplate.getForObject(
+				URL_SERVICE_ADDITION + "?format=json&op1=" + operande1 + "&op2=" + operande2, ReponseAddition.class);
+
+		log.info("Réponse retournée suite à l'appel du service: {}", res.toString());
 	}
 }
