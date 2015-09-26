@@ -10,5 +10,6 @@
   
   <modules>
   	<module>voteapp-webapp</module>
+  	<module>voteapp-cli</module>
   </modules>
 </project>
