@@ -1,5 +1,6 @@
 package fr.sgr.formation.voteapp.calculatrice.ws;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,16 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.sgr.formation.voteapp.calculatrice.modele.ParametresOperation;
 import fr.sgr.formation.voteapp.calculatrice.modele.ResultatOperation;
+import fr.sgr.formation.voteapp.calculatrice.services.CalculatriceService;
 
 @RestController
 @RequestMapping("/calculatrice")
 public class CalculatriceRest {
+	@Autowired
+	private CalculatriceService calculatrice;
 
 	@RequestMapping("/add")
 	// @RequestMapping(value = "/add", produces = {
 	// MediaType.APPLICATION_JSON_VALUE})
 	public ResultatOperation additionner(@RequestParam double operande1, @RequestParam double operande2) {
-		return add(operande1, operande2);
+		return calculatrice.ajouter(operande1, operande2);
 	}
 
 	/**
@@ -33,7 +37,7 @@ public class CalculatriceRest {
 	 */
 	@RequestMapping(value = "/add", produces = { MediaType.TEXT_HTML_VALUE })
 	public String additionnerVersHtml(@RequestParam double operande1, @RequestParam double operande2) {
-		return add(operande1, operande2).toHtml();
+		return calculatrice.ajouter(operande1, operande2).toHtml();
 	}
 
 	@RequestMapping(value = "/add", consumes = { MediaType.APPLICATION_JSON_VALUE }, method = RequestMethod.POST)
@@ -43,18 +47,7 @@ public class CalculatriceRest {
 			throw new IllegalArgumentException("Les deux opérandes sont obligatoires.");
 		}
 
-		return add(paramOperation.getOperande1(), paramOperation.getOperande2());
-	}
-
-	private ResultatOperation add(double operande1, double operande2) {
-		// @formatter:off
-		return ResultatOperation.builder()
-				.typeOperation(" + ")
-				.operande1(operande1)
-				.operande2(operande2)
-				.resultat(operande1 + operande2)
-				.build();
-		// @formatter:on
+		return calculatrice.ajouter(paramOperation.getOperande1(), paramOperation.getOperande2());
 	}
 
 	@ExceptionHandler({ IllegalArgumentException.class })
