@@ -1,7 +1,12 @@
 package fr.sgr.formation.voteapp.utilisateurs.services;
 
+import javax.persistence.EntityManager;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
@@ -20,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@Transactional(propagation = Propagation.SUPPORTS)
 public class UtilisateursServices {
 	/** Services de validation d'un utilisateur. */
 	@Autowired
@@ -27,6 +33,9 @@ public class UtilisateursServices {
 	/** Services de notification des événements. */
 	@Autowired
 	private NotificationsServices notificationsServices;
+
+	@Autowired
+	private EntityManager entityManager;
 
 	/**
 	 * Crée un nouvel utilisateur sur le système.
@@ -37,6 +46,7 @@ public class UtilisateursServices {
 	 * @throws UtilisateurInvalideException
 	 *             Levée si l'utilisateur est invalide.
 	 */
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Utilisateur creer(Utilisateur utilisateur) throws UtilisateurInvalideException {
 		log.info("=====> Création de l'utilisateur : {}.", utilisateur);
 
@@ -58,6 +68,9 @@ public class UtilisateursServices {
 		/** Notification de l'événement de création */
 		notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.toString());
 
+		/** Persistance de l'utilisateur. */
+		entityManager.persist(utilisateur);
+
 		return utilisateur;
 	}
 
@@ -69,6 +82,12 @@ public class UtilisateursServices {
 	 * @return Retourne l'utilisateur identifié par le login.
 	 */
 	public Utilisateur rechercherParLogin(String login) {
+		log.info("=====> Recherche de l'utilisateur de login {}.", login);
+
+		if (StringUtils.isNotBlank(login)) {
+			return entityManager.find(Utilisateur.class, login);
+		}
+
 		return null;
 	}
 }
