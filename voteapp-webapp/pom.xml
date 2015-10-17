@@ -20,6 +20,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
 
 		<dependency>
 			<!-- Dépendance pour disposer des classes nécessaires pour créer une application 
@@ -45,7 +49,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.1.3</version>
 		</dependency>
 	</dependencies>
 
