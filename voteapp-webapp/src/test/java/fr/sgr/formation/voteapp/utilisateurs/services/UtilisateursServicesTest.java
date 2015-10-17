@@ -2,6 +2,8 @@ package fr.sgr.formation.voteapp.utilisateurs.services;
 
 import static org.junit.Assert.fail;
 
+import javax.persistence.EntityManager;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +27,8 @@ public class UtilisateursServicesTest {
 	private ValidationUtilisateurServices validationServices;
 	@Mock
 	private NotificationsServices notificationsServices;
+	@Mock
+	private EntityManager entityManager;
 
 	@Test
 	public void creerUtilisateurNul() {
@@ -45,7 +49,7 @@ public class UtilisateursServicesTest {
 		Utilisateur utilisateur = Utilisateur.builder().login(RandomStringUtils.random(10)).build();
 		/* Et que l'utilisateur existe sur le système */
 		UtilisateursServices spy = Mockito.spy(services);
-		Mockito.when(spy.rechercherParLogin(utilisateur.getLogin())).thenReturn(utilisateur);
+		Mockito.doReturn(utilisateur).when(spy).rechercherParLogin(utilisateur.getLogin());
 
 		try {
 			/** Lorsqu'on appelle le service de création. */
@@ -104,6 +108,8 @@ public class UtilisateursServicesTest {
 	public void creerAppelNotification() throws UtilisateurInvalideException {
 		/** Etant donné un utilsateur à créer. */
 		Utilisateur utilisateur = Utilisateur.builder().login(RandomStringUtils.random(10)).build();
+		/* Qui n'existe pas en base */
+		Mockito.when(entityManager.find(Utilisateur.class, utilisateur.getLogin())).thenReturn(null);
 
 		/** Lorsqu'on appelle le service de création. */
 		services.creer(utilisateur);

@@ -26,6 +26,7 @@ public class UtilisateursRest {
 	public void creer(@PathVariable String login, @RequestBody Utilisateur utilisateur)
 			throws UtilisateurInvalideException {
 		log.info("=====> Création ou modification de l'utilisateur de login {}: {}.", login, utilisateur);
+		utilisateur.setLogin(login);
 		utilisateursServices.creer(utilisateur);
 	}
 
@@ -39,13 +40,7 @@ public class UtilisateursRest {
 	public Utilisateur lire(@PathVariable String login) {
 		log.info("=====> Récupération de l'utilisateur de login {}.", login);
 
-		// @formatter:off
-		return Utilisateur.builder()
-				.login(login)
-				.nom("Martin")
-				.prenom("Jean")
-				.build();
-		// @formatter:on
+		return utilisateursServices.rechercherParLogin(login);
 	}
 
 	@ExceptionHandler({ UtilisateurInvalideException.class })
