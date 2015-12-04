@@ -19,6 +19,8 @@ import fr.sgr.formation.voteapp.utilisateurs.modele.Adresse;
 import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Ville;
+import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException;
+import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
 import fr.sgr.formation.voteapp.utilisateurs.services.VilleService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,7 @@ public class Initialisation {
 
 	@Autowired
 	private VilleService villeService;
+	private UtilisateursServices us;
 
 	@PostConstruct
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -70,6 +73,12 @@ public class Initialisation {
 
 
 		villeService.creer(rennes);
+		try {
+			us.creer(jean);
+		} catch (UtilisateurInvalideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
