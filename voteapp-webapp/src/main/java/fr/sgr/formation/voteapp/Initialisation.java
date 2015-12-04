@@ -31,30 +31,32 @@ public class Initialisation {
 
 	@Autowired
 	private VilleService villeService;
+	@Autowired
 	private UtilisateursServices us;
 
 	@PostConstruct
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void init() {
 		log.info("Initialisation des villes par défaut dans la base...");
-		
+
 		Ville rennes = new Ville();
 		rennes.setCodePostal("35000");
 		rennes.setNom("Rennes");
-		
+
+		// Initialisation de l'utilisateur jean
 		log.info("Initialisation des utilisateurs par défaut dans la base...");
 		Utilisateur jean = new Utilisateur();
 		Adresse chezJean = new Adresse();
 		chezJean.setRue("Contour Antoine de St Exupéry");
 		chezJean.setVille(rennes);
-		
+
 		jean.setAdresse(chezJean);
 		jean.setEmail("jean@Queyrie.com");
 		jean.setLogin("jean");
 		jean.setMotDePasse("talb");
 		jean.setNom("Queyrie");
 		jean.setPrenom("Jean");
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date annivJean;
 		try {
@@ -66,11 +68,10 @@ public class Initialisation {
 		}
 
 		List<ProfilsUtilisateur> profilsJean = new ArrayList<ProfilsUtilisateur>();
-		
+
 		profilsJean.add(ProfilsUtilisateur.ADMINISTRATEUR);
 		profilsJean.add(ProfilsUtilisateur.UTILISATEUR);
 		jean.setProfils(profilsJean);
-
 
 		villeService.creer(rennes);
 		try {
@@ -80,5 +81,4 @@ public class Initialisation {
 			e.printStackTrace();
 		}
 	}
-
 }
