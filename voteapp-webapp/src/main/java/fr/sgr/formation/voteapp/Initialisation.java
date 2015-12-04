@@ -1,5 +1,11 @@
 package fr.sgr.formation.voteapp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.sgr.formation.voteapp.utilisateurs.modele.Adresse;
+import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
+import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Ville;
 import fr.sgr.formation.voteapp.utilisateurs.services.VilleService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +34,40 @@ public class Initialisation {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void init() {
 		log.info("Initialisation des villes par défaut dans la base...");
+		
 		Ville rennes = new Ville();
 		rennes.setCodePostal("35000");
 		rennes.setNom("Rennes");
+		
+		log.info("Initialisation des utilisateurs par défaut dans la base...");
+		Utilisateur jean = new Utilisateur();
+		Adresse chezJean = new Adresse();
+		chezJean.setRue("Contour Antoine de St Exupéry");
+		chezJean.setVille(rennes);
+		
+		jean.setAdresse(chezJean);
+		jean.setEmail("jean@Queyrie.com");
+		jean.setLogin("jean");
+		jean.setMotDePasse("talb");
+		jean.setNom("Queyrie");
+		jean.setPrenom("Jean");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date annivJean;
+		try {
+			annivJean = sdf.parse("28/12/1992");
+			jean.setDateDeNaissance(annivJean);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		List<ProfilsUtilisateur> profilsJean = new ArrayList<ProfilsUtilisateur>();
+		
+		profilsJean.add(ProfilsUtilisateur.ADMINISTRATEUR);
+		profilsJean.add(ProfilsUtilisateur.UTILISATEUR);
+		jean.setProfils(profilsJean);
+
 
 		villeService.creer(rennes);
 	}
