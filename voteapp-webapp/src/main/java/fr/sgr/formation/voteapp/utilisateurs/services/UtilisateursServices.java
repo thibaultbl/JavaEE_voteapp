@@ -85,7 +85,9 @@ public class UtilisateursServices {
 		log.info("=====> Recherche de l'utilisateur de login {}.", login);
 
 		if (StringUtils.isNotBlank(login)) {
-			return entityManager.find(Utilisateur.class, login);
+			Utilisateur temp = entityManager.find(Utilisateur.class, login);
+			System.out.println(temp.getPrenom() + " " + temp.getNom());
+			return temp;
 		}
 
 		return null;
