@@ -43,7 +43,7 @@ public class Utilisateur {
 	@Enumerated(EnumType.STRING)
 	@Singular
 	private List<ProfilsUtilisateur> profils;
-
+	// test
 	@Embedded
 	private Adresse adresse;
 }
