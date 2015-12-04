@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 
 import fr.sgr.formation.voteapp.servlet.AdditionnerServlet;
 
+
+//Classe qui contient la fonction main
 @SpringBootApplication
 public class VoteApp {
 	@Bean(name = "additionner")
