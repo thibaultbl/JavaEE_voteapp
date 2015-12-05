@@ -90,4 +90,30 @@ public class UtilisateursServices {
 
 		return null;
 	}
+	
+	/**
+	 * Supprime de la base l'utilisateur identifié par le login.
+	 * 
+	 * @param login
+	 *            Login identifiant l'utilisateur.
+	 */
+	public void supprimer(String login) {
+
+
+		if (StringUtils.isNotBlank(login)) {
+	        //Trouve l'utilisateur par le login
+	        Utilisateur temp = entityManager.find(Utilisateur.class, login);
+	         
+	        //Supprime l'utilisateur de la base si il existe
+	        if(temp != null){
+	        	entityManager.remove(temp);
+	        	/** Notification de l'événement de création */
+	    		notificationsServices.notifier("Suppresion de l'utilisateur: " + temp.toString());
+	        }
+	        else{
+	        	/** Notification de l'événement de création */
+	    		notificationsServices.notifier("Impossible de créer l'utilisateur "+login+" car il n'existe pas.");
+	        }
+		}
+	}
 }

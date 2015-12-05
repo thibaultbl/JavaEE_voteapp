@@ -33,7 +33,7 @@ public class UtilisateursRest {
 	@RequestMapping(method = RequestMethod.DELETE)
 	public void supprimer(@PathVariable String login) {
 		log.info("=====> Suppression de l'utilisateur de login {}.", login);
-
+		utilisateursServices.supprimer(login);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
