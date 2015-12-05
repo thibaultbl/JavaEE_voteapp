@@ -97,8 +97,9 @@ public class UtilisateursServices {
 	 * @param login
 	 *            Login identifiant l'utilisateur.
 	 */
+	
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void supprimer(String login) {
-
 
 		if (StringUtils.isNotBlank(login)) {
 	        //Trouve l'utilisateur par le login
