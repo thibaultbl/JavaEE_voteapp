@@ -109,7 +109,7 @@ public class UtilisateursServices {
 	        if(temp != null){
 	        	entityManager.remove(temp);
 	        	/** Notification de l'événement de création */
-	    		notificationsServices.notifier("Suppresion de l'utilisateur: " + temp.toString());
+	    		notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString());
 	        }
 	        else{
 	        	/** Notification de l'événement de création */

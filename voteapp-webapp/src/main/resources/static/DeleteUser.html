@@ -3,21 +3,25 @@
 <script type="text/javascript"
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
 <script>
-    $(document).ready(function(){
-        $(frm.login).keyup(function(){
-        	$.ajax({
-        	    url: '/utilisateurs/'+$(frm.login).val(),
-        	    type: 'DELETE',
-        	    success: function(result) {
-        	        // Do something with the result
-        	    }
-        	});
-            $(frm).get(0).setAttribute('action', 'utilisateurs/'+$(frm.login).val());
-     	});
-   });
+	$(document).ready(
+			function() {
+				$(frm.login).keyup(
+						function() {
+							$.ajax({
+								url : '/utilisateurs/' + $(frm.login).val(),
+								type : 'DELETE',
+								success : function(result) {
+									// Do something with the result
+								}
+							});
+							$(frm).get(0).setAttribute('action',
+									'utilisateurs/' + $(frm.login).val());
+						});
+			});
 </script>
 </head>
 <body>
+
 	<h1>Suppression d'utilisateur par login :</h1>
 
 	<form id="frm" action="">
@@ -35,7 +39,7 @@
 			</tr>
 			<tr>
 				<td class="button"><input type="submit" id="sub"
-					value="Supprimer"/></td>
+					value="Supprimer" /></td>
 			</tr>
 		</table>
 	</form>
