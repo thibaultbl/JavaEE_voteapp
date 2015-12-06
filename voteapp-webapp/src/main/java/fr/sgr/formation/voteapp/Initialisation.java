@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.sgr.formation.voteapp.elections.modele.Election;
+import fr.sgr.formation.voteapp.elections.services.ElectionInvalideException;
+import fr.sgr.formation.voteapp.elections.services.ElectionsServices;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Adresse;
 import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
@@ -33,6 +36,8 @@ public class Initialisation {
 	private VilleService villeService;
 	@Autowired
 	private UtilisateursServices us;
+	@Autowired
+	private ElectionsServices electionServices;
 
 	@PostConstruct
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -80,5 +85,16 @@ public class Initialisation {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// Initialisation d'une election
+		log.info("Creation d'une élection");
+		Election elec = new Election(jean, "super election", "ceci est une élection test");
+		try {
+			electionServices.creer(elec);
+		} catch (ElectionInvalideException e) {
+			/** Then: Alors une exception est levée. */
+			e.printStackTrace();
+		}
+
 	}
 }
