@@ -61,6 +61,8 @@ public class ElectionsServices {
 		/** Persistance de l'election. */
 		entityManager.persist(election);
 
+		entityManager.persist(election);
+
 		return election;
 	}
 

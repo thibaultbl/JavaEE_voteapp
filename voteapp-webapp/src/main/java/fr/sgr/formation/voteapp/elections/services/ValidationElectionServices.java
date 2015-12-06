@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import fr.sgr.formation.voteapp.elections.modele.Election;
 import fr.sgr.formation.voteapp.elections.services.ElectionInvalideException.ErreurElection;
+import fr.sgr.formation.voteapp.utilisateurs.modele.Proprietaire;
 
 /**
  * Bean mettant à disposition les services permettant de valider les
@@ -17,8 +18,8 @@ public class ValidationElectionServices {
 	 * 
 	 * @param election
 	 *            Election à valider.
-	 * @return true si l'élection est valide, false si aucune élection
-	 *         n'est passé en paramètre.
+	 * @return true si l'élection est valide, false si aucune élection n'est
+	 *         passé en paramètre.
 	 * @throws ElectionInvalideException
 	 *             Levée si l'élection est invalide.
 	 */
@@ -42,9 +43,13 @@ public class ValidationElectionServices {
 	}
 
 	private void validerProprietaire(Election election) throws ElectionInvalideException {
-		if (election.getProprietaire()==null) {
+		if ((election.getProprietaire() == null) && (election.getProprietaire().getClass() == Proprietaire.class)) {
 			throw new ElectionInvalideException(ErreurElection.PROPRIETAIRE_OBLIGATOIRE);
 		}
+		if (election.getProprietaire().getClass() == Proprietaire.class) {
+			throw new ElectionInvalideException(ErreurElection.PROPRIETAIRE_NON_AUTORISE);
+		}
+
 	}
 
 	private void validerDescription(Election election) throws ElectionInvalideException {

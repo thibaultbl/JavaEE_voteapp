@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 public class Election {
-	@Id
 	private Utilisateur proprietaire;
+	@Id
 	private String titre;
 	private String description;
 }
