@@ -2,6 +2,7 @@ package fr.sgr.formation.voteapp.elections.modele;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 public class Election {
+	@ManyToOne
 	private Utilisateur proprietaire;
 	@Id
 	private String titre;

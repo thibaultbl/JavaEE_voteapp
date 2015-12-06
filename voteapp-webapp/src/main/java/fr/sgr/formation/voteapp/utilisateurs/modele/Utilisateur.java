@@ -1,5 +1,6 @@
 package fr.sgr.formation.voteapp.utilisateurs.modele;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -11,9 +12,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import fr.sgr.formation.voteapp.elections.modele.Election;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,6 +41,9 @@ public class Utilisateur {
 	private Date dateDeNaissance;
 	private String email;
 
+	@OneToMany
+	private Collection<Election> elections;
+
 	@ElementCollection(targetClass = ProfilsUtilisateur.class)
 	@CollectionTable(name = "profilsUtilisateurs", joinColumns = @JoinColumn(name = "loginUtilisateur") )
 	@Enumerated(EnumType.STRING)
@@ -46,6 +52,5 @@ public class Utilisateur {
 	// test
 	@Embedded
 	private Adresse adresse;
-	
-	
+
 }
