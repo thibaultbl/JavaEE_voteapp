@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.sgr.formation.voteapp.elections.modele.Election;
 import fr.sgr.formation.voteapp.elections.services.ElectionInvalideException;
 import fr.sgr.formation.voteapp.elections.services.ElectionsServices;
-import fr.sgr.formation.voteapp.utilisateurs.services.AuthentificationUtilisateurService;
 import fr.sgr.formation.voteapp.utilisateurs.ws.DescriptionErreur;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,21 +21,23 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("elections/{titre}")
 @Slf4j
 public class ElectionsRest {
+
 	@Autowired
 	private ElectionsServices electionsServices;
-	private AuthentificationUtilisateurService authentificationUtilisateursServices;
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public void creer(@PathVariable String titre, @RequestBody Election election)
+	public void creer(@PathVariable String titre, @RequestBody Election election, @RequestParam String idUser)
 			throws ElectionInvalideException {
 		log.info("=====> Création ou modification de l'élection de titre {}: {}.", titre, election);
 		election.setTitre(titre);
-		electionsServices.creer(election);
+		electionsServices.creer(election, idUser);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
-	public void supprimer(@PathVariable String titre, @RequestParam String idUser) {
+	public void supprimer(@PathVariable String titre, @RequestParam String idUser) throws ElectionInvalideException {
+
 		log.info("=====> Suppression de l'élection de titre {}.", titre);
+		electionsServices.supprimer(titre, idUser);
 
 	}
 

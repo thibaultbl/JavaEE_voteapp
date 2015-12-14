@@ -42,7 +42,7 @@ public class ElectionsServicesTest {
 	public void testCreer() {
 		try {
 			/** When: Lorsqu'on appel le service de création */
-			services.creer(election2);
+			services.creer(election2, "jean");
 		} catch (ElectionInvalideException e) {
 			/** Then: Alors une exception est levée. */
 			Assert.assertEquals(ElectionInvalideException.ErreurElection.PROPRIETAIRE_NON_AUTORISE, e.getErreur());
@@ -53,7 +53,7 @@ public class ElectionsServicesTest {
 	public void testRechercherParTitre() {
 		try {
 			/** When: Lorsqu'on appel le service de création */
-			services.creer(election3);
+			services.creer(election3, "jean");
 		} catch (ElectionInvalideException e) {
 			/** Then: Alors une exception est levée. */
 			Assert.assertEquals("ceci est une élection test",

@@ -75,7 +75,7 @@ public class Initialisation {
 		List<ProfilsUtilisateur> profilsJean = new ArrayList<ProfilsUtilisateur>();
 
 		profilsJean.add(ProfilsUtilisateur.ADMINISTRATEUR);
-		profilsJean.add(ProfilsUtilisateur.UTILISATEUR);
+		profilsJean.add(ProfilsUtilisateur.GERANT);
 		jean.setProfils(profilsJean);
 
 		villeService.creer(rennes);
@@ -90,15 +90,22 @@ public class Initialisation {
 		log.info("Creation d'une élection");
 		Election elec = new Election(jean, "super election", "ceci est une élection test", true);
 		try {
-			electionServices.creer(elec);
-			electionServices.cloturer(elec);
-			electionServices.creer(elec);
-			System.out.println(elec.isActiveElection());
-
+			electionServices.creer(elec, "jean");
 		} catch (ElectionInvalideException e) {
-			/** Then: Alors une exception est levée. */
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		/*
+		 * try { electionServices.creer(elec, "jean");
+		 * electionServices.cloturer(elec.getTitre(), "jean");
+		 * electionServices.creer(elec, "jean");
+		 * System.out.println(elec.isActiveElection());
+		 * 
+		 * } catch (ElectionInvalideException e) {
+		 *//** Then: Alors une exception est levée. *//*
+														 * e.printStackTrace();
+														 * }
+														 */
 
 	}
 }

@@ -29,8 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UtilisateursServices {
 
 	/** Services d'authentification d'un utilisateur. */
-	@Autowired
-	private AuthentificationUtilisateursServices authServices ;
+	// @Autowired
+	// private ValidationUtilisateurServices validationServices;
 
 	/** Services de validation d'un utilisateur. */
 	@Autowired
@@ -38,8 +38,6 @@ public class UtilisateursServices {
 	/** Services de notification des événements. */
 	@Autowired
 	private NotificationsServices notificationsServices;
-
-
 
 	@Autowired
 	private EntityManager entityManager;
@@ -109,27 +107,23 @@ public class UtilisateursServices {
 	public void supprimer(String login, String idUser) {
 
 		if (StringUtils.isNotBlank(login)) {
-			//Trouve l'utilisateur par le login
-			//boolean droit = AuthentificationUtilisateursServices.varifDroits(idUser);
+			// Trouve l'utilisateur par le login
+			// boolean droit =
+			// AuthentificationUtilisateursServices.varifDroits(idUser);
 
 			Utilisateur temp = entityManager.find(Utilisateur.class, login);
-			boolean droit = authServices.adminVerif(idUser);
 
-			if (droit) {
-				//Supprime l'utilisateur de la base si il existe
-				if(temp != null){
-					entityManager.remove(temp);
-					/** Notification de l'événement de création */
-					notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString());
-				}
-				else{
-					/** Notification de l'événement de création */
-					notificationsServices.notifier("Impossible de supprimer l'utilisateur "+login+" car il n'existe pas.");
-				}
-			} 
-			else {
-				notificationsServices.notifier("L'utilisateur " + login + " n'a pas les droits pour effectuer cette opération");
+			// Supprime l'utilisateur de la base si il existe
+			if (temp != null) {
+				entityManager.remove(temp);
+				/** Notification de l'événement de création */
+				notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString());
+			} else {
+				/** Notification de l'événement de création */
+				notificationsServices
+						.notifier("Impossible de supprimer l'utilisateur " + login + " car il n'existe pas.");
 			}
 		}
 	}
+
 }
