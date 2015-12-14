@@ -27,12 +27,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(propagation = Propagation.SUPPORTS)
 public class UtilisateursServices {
+	
+	/** Services d'authentification d'un utilisateur. */
+	//@Autowired
+	//private ValidationUtilisateurServices validationServices;
+	
 	/** Services de validation d'un utilisateur. */
 	@Autowired
 	private ValidationUtilisateurServices validationServices;
 	/** Services de notification des événements. */
 	@Autowired
 	private NotificationsServices notificationsServices;
+	
+	
 
 	@Autowired
 	private EntityManager entityManager;
@@ -99,12 +106,14 @@ public class UtilisateursServices {
 	 */
 	
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void supprimer(String login) {
+	public void supprimer(String login, String idUser) {
 
 		if (StringUtils.isNotBlank(login)) {
 	        //Trouve l'utilisateur par le login
+			//boolean droit = AuthentificationUtilisateursServices.varifDroits(idUser);
+			
 	        Utilisateur temp = entityManager.find(Utilisateur.class, login);
-	         
+	        
 	        //Supprime l'utilisateur de la base si il existe
 	        if(temp != null){
 	        	entityManager.remove(temp);
@@ -113,7 +122,7 @@ public class UtilisateursServices {
 	        }
 	        else{
 	        	/** Notification de l'événement de création */
-	    		notificationsServices.notifier("Impossible de créer l'utilisateur "+login+" car il n'existe pas.");
+	    		notificationsServices.notifier("Impossible de supprimer l'utilisateur "+login+" car il n'existe pas.");
 	        }
 		}
 	}
