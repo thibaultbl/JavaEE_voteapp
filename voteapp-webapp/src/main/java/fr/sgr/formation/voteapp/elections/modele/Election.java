@@ -24,4 +24,5 @@ public class Election {
 	@Id
 	private String titre;
 	private String description;
+
 }
