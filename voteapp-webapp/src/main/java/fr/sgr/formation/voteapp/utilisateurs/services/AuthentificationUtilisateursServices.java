@@ -48,5 +48,33 @@ public class AuthentificationUtilisateursServices {
 		}
 		return droit;
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public boolean gerantVerif(String login) {
+
+		boolean droit = false;
+
+		if (StringUtils.isNotBlank(login)) {
+			//Trouve l'utilisateur par le login
+			Utilisateur temp = entityManager.find(Utilisateur.class, login);
+			//Vérifie si l'utilisateur existe en base
+			if(temp != null){
+				notificationsServices.notifier("Utilisateur : " + temp.getLogin());
+				if(temp.getLogin().equals(login)) { //Forcément vraie si l'utilisateur existe en base...
+					for (int i=0; i<temp.getProfils().size();i++){
+
+						if(temp.getProfils().get(i)==ProfilsUtilisateur.GERANT){
+							droit=true;
+						}
+					}
+				}
+			}
+			else{
+				/** Notification de l'échec de l'authentification */
+				notificationsServices.notifier("Impossible de vous connecter avec le login "+login+" car il n'existe pas.");
+			}
+		}
+		return droit;
+	}
 
 }
