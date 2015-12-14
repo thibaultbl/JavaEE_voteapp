@@ -1,0 +1,97 @@
+<html>
+<head>
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+<script>
+	$(document).ready(
+			function() {
+				$(frm.login).keyup(
+						function() {
+							$.ajax({
+								url : '/utilisateurs/' + $(frm.login).val(),
+								type : 'DELETE',
+								success : function(result) {
+									// Do something with the result
+								}
+							});
+							$(frm).get(0).setAttribute('action',
+									'utilisateurs/' + $(frm.login).val());
+						});
+			});
+</script>
+</head>
+<body>
+
+	<h1>Suppression d'utilisateur par login :</h1>
+
+	<form id="frm" action="">
+		<table>
+			<tr>
+				<td>
+					<table class="formulaire">
+						<tr>
+							<td class="left"><label for="login">Login :</label></td>
+							<td>
+								<input type="text" name="login" id="login" 
+								placeholder="Ex : Jean" size="20" maxlength="10" />
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="nom">Nom : </label></td>
+							<td>
+								<input type="text" name="nom" id="nom" size="20" maxlength="10" />
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="prenom">Prénom : </label></td>
+							<td>
+								<input type="text" name="prenom" id="prenom" size="20" maxlength="10" />
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="motDePasse">Mot de passe : </label></td>
+							<td>
+								<input type="password" name="motDePasse" id="motDePasse" size="20" maxlength="10" />
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="dateDeNaissance">Date de naissance : </label></td>
+							<td>
+								<input type="date" name="dateDeNaissance" id="dateDeNaissance" size="20" maxlength="10" />
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="email">Mot de passe : </label></td>
+							<td>
+								<input type="text" name="email" id="email" size="20" maxlength="10" />
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="profils">Profils : </label></td>
+							<td>
+								<input type="checkbox" name="administrateur" id="administrateur" 
+								value="ADMINISTRATEUR" size="20" maxlength="10" />Administrateur<br/>
+								<input type="checkbox" name="gerant" id="gerant" 
+								value="GERANT" size="20" maxlength="10" />Gérant<br/>
+								<input type="checkbox" name="utilisateur" id="utilisateur" 
+								value="UTILISATEUR" size="20" maxlength="10" />Utilisateur
+							</td>
+						</tr>
+						<tr>
+							<td class="left"><label for="email">Adresse : </label></td>
+							<td>
+								<input type="text" name="adresse" id="adresse" size="20" maxlength="10" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td class="button"><input type="submit" id="sub"
+					value="Créer l'utilisateur" /></td>
+			</tr>
+		</table>
+	</form>
+
+</body>
+</html>
