@@ -28,6 +28,7 @@ public class ElectionInvalideException extends Exception {
 		PROPRIETAIRE_OBLIGATOIRE("Le propriétaire de l'élection est obligatoire."),
 		DESCRIPTION_OBLIGATOIRE("La description est obligatoire."),
 		ELECTION_EXISTANTE("Une élection de même titre existe déjà sur le système."),
+		ELECTION_NON_EXISTANTE("Cette élection n'existe pas"),
 		PROPRIETAIRE_NON_AUTORISE("Le propriétaire n'a pas les droits pour créer une élection.");
 
 		@Getter

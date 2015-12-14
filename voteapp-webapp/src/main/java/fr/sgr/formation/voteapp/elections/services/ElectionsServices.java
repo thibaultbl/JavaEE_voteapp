@@ -61,7 +61,91 @@ public class ElectionsServices {
 		/** Persistance de l'election. */
 		entityManager.persist(election);
 
-		entityManager.persist(election);
+		return election;
+	}
+
+	/**
+	 * Cloture uen élection
+	 * 
+	 * @param election
+	 *            Election à cloturer.
+	 * @return Election cloturée.
+	 * @throws ElectionInvalideException
+	 *             Levée si l'election est invalide.
+	 */
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Election cloturer(Election election) throws ElectionInvalideException {
+		log.info("=====> cloture de l'election : {}.", election);
+
+		if (election == null) {
+			throw new ElectionInvalideException(ErreurElection.ELECTION_OBLIGATOIRE);
+		}
+
+		/** Validation de l'existance de l'election. */
+		if (rechercherParTitre(election.getTitre()) == null) {
+			throw new ElectionInvalideException(ErreurElection.ELECTION_NON_EXISTANTE);
+		}
+
+		election.setActiveElection(false);
+
+		/**
+		 * Validation de l'election: lève une exception si l'election est
+		 * invalide.
+		 */
+		validationServices.validerElection(election);
+
+		/** Notification de l'événement de création */
+		notificationsServices.notifier("Cloture de l'election: " + election.toString());
+
+		/** Persistance de l'election. */
+		// entityManager.persist(election);
+
+		return election;
+	}
+
+	/**
+	 * Cloture uen élection
+	 * 
+	 * @param election
+	 *            Election à cloturer.
+	 * @return Election cloturée.
+	 * @throws ElectionInvalideException
+	 *             Levée si l'election est invalide.
+	 */
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Election supprimer(String titre) throws ElectionInvalideException {
+		/** Validation de l'existance de l'election. */
+		if (rechercherParTitre(titre) == null) {
+			throw new ElectionInvalideException(ErreurElection.ELECTION_NON_EXISTANTE);
+		}
+		Election election = entityManager.find(Election.class, titre);
+		log.info("=====> supression de l'election : {}.", election);
+
+		if (election == null) {
+			throw new ElectionInvalideException(ErreurElection.ELECTION_OBLIGATOIRE);
+		}
+
+		// Supprime l'utilisateur de la base si il existe
+		if (election != null) {
+			entityManager.remove(election);
+			/** Notification de l'événement de création */
+			notificationsServices.notifier("Suppression de l'élection: " + election.toString());
+		} else {
+			/** Notification de l'événement de création */
+			notificationsServices.notifier("Impossible de supprimer l'élection " + titre + " car il n'existe pas.");
+		}
+
+		/**
+		 * Validation de l'election: lève une exception si l'election est
+		 * invalide.
+		 */
+		validationServices.validerElection(election);
+
+		/** Notification de l'événement de création */
+		notificationsServices.notifier("Cloture de l'election: " + election.toString());
+
+		/** Persistance de l'election. */
+		// entityManager.persist(election);
 
 		return election;
 	}

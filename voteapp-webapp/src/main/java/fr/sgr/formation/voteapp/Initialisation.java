@@ -88,9 +88,13 @@ public class Initialisation {
 
 		// Initialisation d'une election
 		log.info("Creation d'une élection");
-		Election elec = new Election(jean, "super election", "ceci est une élection test");
+		Election elec = new Election(jean, "super election", "ceci est une élection test", true);
 		try {
 			electionServices.creer(elec);
+			electionServices.cloturer(elec);
+			electionServices.creer(elec);
+			System.out.println(elec.isActiveElection());
+
 		} catch (ElectionInvalideException e) {
 			/** Then: Alors une exception est levée. */
 			e.printStackTrace();
