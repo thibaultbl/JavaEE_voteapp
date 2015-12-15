@@ -29,8 +29,19 @@ public class ElectionsRest {
 	public void creer(@PathVariable String titre, @RequestBody Election election, @RequestParam String idUser)
 			throws ElectionInvalideException {
 		log.info("=====> Création ou modification de l'élection de titre {}: {}.", titre, election);
-		election.setTitre(titre);
-		electionsServices.creer(election, idUser);
+		if (electionsServices.rechercherParTitre(election.getTitre()) == null) {
+			election.setTitre(titre);
+			electionsServices.creer(election, idUser);
+		} else {
+			electionsServices.modifier(election.getTitre(), idUser);
+		}
+	}
+
+	@RequestMapping(value = "/cloture", method = RequestMethod.PUT)
+	public void cloturer(@PathVariable String titre, @RequestParam String idUser)
+			throws ElectionInvalideException {
+		log.info("=====> Cloture l'élection de titre {}: {}.", titre, electionsServices.rechercherParTitre(titre));
+		electionsServices.cloturer(titre, idUser);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
