@@ -98,7 +98,6 @@ public class UtilisateursServices {
 		return null;
 	}
 
-
 	/**
 	 * Supprime de la base l'utilisateur identifié par le login.
 	 * 
