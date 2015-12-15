@@ -76,5 +76,25 @@ public class AuthentificationUtilisateursServices {
 		}
 		return droit;
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)
+	public boolean utilVerif(String login) {
+
+		boolean droit = false;
+
+		if (StringUtils.isNotBlank(login)) {
+			//Trouve l'utilisateur par le login
+			Utilisateur temp = entityManager.find(Utilisateur.class, login);
+			//Vérifie si l'utilisateur existe en base
+			if(temp != null){
+				droit=true;
+			}
+			else{
+				/** Notification de l'échec de l'authentification */
+				notificationsServices.notifier("Impossible de vous connecter avec le login "+login+" car il n'existe pas.");
+			}
+		}
+		return droit;
+	}
 
 }
