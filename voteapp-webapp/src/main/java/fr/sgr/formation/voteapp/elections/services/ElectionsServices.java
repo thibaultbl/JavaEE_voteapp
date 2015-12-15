@@ -121,12 +121,12 @@ public class ElectionsServices {
 
 			} else {
 				notificationsServices
-						.notifier("Impossible de supprimer l'élection " + titre + " car vous n'êtes pas le créateur");
+						.notifier("Impossible de cloturer l'élection " + titre + " car vous n'êtes pas le créateur");
 			}
 
 		} else {
 			notificationsServices
-					.notifier("Impossible de supprimer l'élection " + titre + " car vous n'êtes pas gérant");
+					.notifier("Impossible de cloturer l'élection " + titre + " car vous n'êtes pas gérant");
 
 		}
 
@@ -158,7 +158,7 @@ public class ElectionsServices {
 			throw new ElectionInvalideException(ErreurElection.ELECTION_OBLIGATOIRE);
 		}
 
-		log.info("=====> Cloture de l'election : {}.", election);
+		log.info("=====> Modification de l'election : {}.", election);
 
 		boolean gerant = authentificationUtilisateursServices.gerantVerif(idUser);
 		boolean createur = verificationCreateurService.createurVerif(idUser, titre);
@@ -181,12 +181,12 @@ public class ElectionsServices {
 
 			} else {
 				notificationsServices
-						.notifier("Impossible de supprimer l'élection " + titre + " car vous n'êtes pas le créateur");
+						.notifier("Impossible de modifier l'élection " + titre + " car vous n'êtes pas le créateur");
 			}
 
 		} else {
 			notificationsServices
-					.notifier("Impossible de supprimer l'élection " + titre + " car vous n'êtes pas gérant");
+					.notifier("Impossible de modifier l'élection " + titre + " car vous n'êtes pas gérant");
 
 		}
 
@@ -232,11 +232,8 @@ public class ElectionsServices {
 					validationServices.validerElection(election);
 
 					/** Notification de l'événement de création */
-					notificationsServices.notifier("Cloture de l'election: " + election.toString());
+					notificationsServices.notifier("Suppression de l'election: " + election.toString());
 					entityManager.remove(election);
-					/** Notification de l'événement de création */
-					notificationsServices.notifier("Suppression de l'élection: " + election.toString());
-
 				}
 			} else {
 				notificationsServices
