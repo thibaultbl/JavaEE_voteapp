@@ -26,18 +26,18 @@ public class ValidationVoteServices {
 			return false;
 		}
 
-		validerVoteKey(vote);
+		// validerVoteKey(vote);
 		validerChoix(vote);
 
 		/** Validation des champs. */
 		return true;
 	}
 
-	private void validerVoteKey(Vote vote) throws VoteInvalideException {
-		if (vote.getVoteKey() == null) {
-			throw new VoteInvalideException(ErreurVote.VOTEKEY_OBLIGATOIRE);
-		}
-	}
+	/*
+	 * private void validerVoteKey(Vote vote) throws VoteInvalideException { if
+	 * (vote.getVoteKey() == null) { throw new
+	 * VoteInvalideException(ErreurVote.VOTEKEY_OBLIGATOIRE); } }
+	 */
 
 	private void validerChoix(Vote vote) throws VoteInvalideException {
 		if (vote.getChoix() == null) {

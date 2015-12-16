@@ -22,15 +22,18 @@ public class ElectionsServicesTest {
 
 	@InjectMocks
 	private ElectionsServices services = new ElectionsServices();
+	@Mock
+	private Utilisateur proprietaire;
 
 	@Mock
 	private Utilisateur user;
 	@Mock
 	private Proprietaire proprio;
+
 	@InjectMocks
-	private Election election2 = new Election(user, "super election", "ceci est une élection test", true);
+	private Election election2 = new Election("super election", "ceci est une élection test", true, user);
 	@InjectMocks
-	private Election election3 = new Election(proprio, "super election", "ceci est une élection test", true);
+	private Election election3 = new Election("super election", "ceci est une élection test", true, proprio);
 	@Mock
 	private EntityManager entityManager;
 	@Mock

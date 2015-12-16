@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.vote.modele.Vote;
-import fr.sgr.formation.voteapp.vote.modele.VoteKey;
 import fr.sgr.formation.voteapp.vote.services.VoteInvalideException.ErreurVote;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +46,7 @@ public class VoteServices {
 		}
 
 		/** Validation de l'existance du vote. */
-		if (rechercherParVoteKey(vote.getVoteKey()) != null) {
+		if (rechercherParVoteKey(vote.getKey()) != null) {
 			throw new VoteInvalideException(ErreurVote.VOTE_EXISTANT);
 		}
 
@@ -72,14 +71,9 @@ public class VoteServices {
 	 *            idVote identifiant le vote.
 	 * @return Retourne le vote identifié par l'idVote.
 	 */
-	public Vote rechercherParVoteKey(VoteKey voteKey) {
-		log.info("=====> Recherche du vote d'voteKey {}.", voteKey);
-
-		if (voteKey == null) {
-			return entityManager.find(Vote.class, voteKey);
-		}
-
-		return null;
+	public Vote rechercherParVoteKey(long key2) {
+		log.info("=====> Recherche du vote d'voteKey {}.", key2);
+		return entityManager.find(Vote.class, key2);
 	}
 
 }

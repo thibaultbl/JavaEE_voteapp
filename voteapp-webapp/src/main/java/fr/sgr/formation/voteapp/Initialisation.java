@@ -25,6 +25,8 @@ import fr.sgr.formation.voteapp.utilisateurs.modele.Ville;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
 import fr.sgr.formation.voteapp.utilisateurs.services.VilleService;
+import fr.sgr.formation.voteapp.vote.modele.ChoixVote;
+import fr.sgr.formation.voteapp.vote.modele.Vote;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -85,10 +87,14 @@ public class Initialisation {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		List<Vote> votes = new ArrayList<Vote>();
+		Election elec = new Election("Election test", "ceci est une élection test", true, admin);
+
+		Vote vote1 = new Vote(5, admin, elec, ChoixVote.OUI);
+		votes.add(vote1);
 
 		// Initialisation d'une election
 		log.info("Creation d'une élection");
-		Election elec = new Election(admin, "Election test", "ceci est une élection test", true);
 		try {
 			electionServices.creer(elec, "admin");
 		} catch (ElectionInvalideException e) {

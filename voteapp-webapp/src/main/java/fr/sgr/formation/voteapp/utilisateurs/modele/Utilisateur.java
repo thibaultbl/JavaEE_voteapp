@@ -16,7 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import fr.sgr.formation.voteapp.elections.modele.Election;
+import fr.sgr.formation.voteapp.vote.modele.Vote;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,7 +42,7 @@ public class Utilisateur {
 	private String email;
 
 	@OneToMany
-	private Collection<Election> elections;
+	private Collection<Vote> votes;
 
 	@ElementCollection(targetClass = ProfilsUtilisateur.class)
 	@CollectionTable(name = "profilsUtilisateurs", joinColumns = @JoinColumn(name = "loginUtilisateur") )
