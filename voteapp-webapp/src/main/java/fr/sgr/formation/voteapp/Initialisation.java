@@ -50,23 +50,23 @@ public class Initialisation {
 
 		// Initialisation de l'utilisateur jean
 		log.info("Initialisation des utilisateurs par défaut dans la base...");
-		Utilisateur jean = new Utilisateur();
-		Adresse chezJean = new Adresse();
-		chezJean.setRue("Contour Antoine de St Exupéry");
-		chezJean.setVille(rennes);
+		Utilisateur admin = new Utilisateur();
+		Adresse adminAdress = new Adresse();
+		adminAdress.setRue("dummy adress");
+		adminAdress.setVille(rennes);
 
-		jean.setAdresse(chezJean);
-		jean.setEmail("jean@Queyrie.com");
-		jean.setLogin("jean");
-		jean.setMotDePasse("talb");
-		jean.setNom("Queyrie");
-		jean.setPrenom("Jean");
+		admin.setAdresse(adminAdress);
+		admin.setEmail("admin@votteapp.com");
+		admin.setLogin("admin");
+		admin.setMotDePasse("admin");
+		admin.setNom("admin");
+		admin.setPrenom("admin");
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date annivJean;
 		try {
-			annivJean = sdf.parse("28/12/1992");
-			jean.setDateDeNaissance(annivJean);
+			annivJean = sdf.parse("01/01/20016");
+			admin.setDateDeNaissance(annivJean);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,11 +76,11 @@ public class Initialisation {
 
 		profilsJean.add(ProfilsUtilisateur.ADMINISTRATEUR);
 		profilsJean.add(ProfilsUtilisateur.GERANT);
-		jean.setProfils(profilsJean);
+		admin.setProfils(profilsJean);
 
 		villeService.creer(rennes);
 		try {
-			us.creer(jean);
+			us.creer(admin);
 		} catch (UtilisateurInvalideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,9 +88,9 @@ public class Initialisation {
 
 		// Initialisation d'une election
 		log.info("Creation d'une élection");
-		Election elec = new Election(jean, "super election", "ceci est une élection test", true);
+		Election elec = new Election(admin, "Election test", "ceci est une élection test", true);
 		try {
-			electionServices.creer(elec, "jean");
+			electionServices.creer(elec, "admin");
 		} catch (ElectionInvalideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

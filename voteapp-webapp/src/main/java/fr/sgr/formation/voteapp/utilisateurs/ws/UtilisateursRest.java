@@ -52,6 +52,13 @@ public class UtilisateursRest {
 		utilisateursServices.changePassword(login,idUser,new_pswd);
 	}
 	
+	@RequestMapping(value="/modif",method = RequestMethod.PUT)
+	public void changeInfos(@PathVariable String login, @RequestParam String idUser,@RequestBody Utilisateur user) throws UtilisateurInvalideException {
+		log.info("=====> Modification de l'utilisateur de login {}.", login);
+
+		utilisateursServices.changeInfos(login,idUser,user);
+	}
+	
 	@ExceptionHandler({ UtilisateurInvalideException.class })
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public DescriptionErreur gestionErreur(UtilisateurInvalideException exception) {

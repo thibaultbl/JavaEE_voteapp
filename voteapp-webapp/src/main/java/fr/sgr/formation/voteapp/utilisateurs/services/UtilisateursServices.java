@@ -54,29 +54,29 @@ public class UtilisateursServices {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Utilisateur creer(Utilisateur utilisateur) throws UtilisateurInvalideException {
 
-			log.info("=====> Création de l'utilisateur : {}.", utilisateur);
+		log.info("=====> Création de l'utilisateur : {}.", utilisateur);
 
-			if (utilisateur == null) {
-				throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
-			}
+		if (utilisateur == null) {
+			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
+		}
 
-			/** Validation de l'existance de l'utilisateur. */
-			if (rechercherParLogin(utilisateur.getLogin()) != null) {
-				throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_EXISTANT);
-			}
+		/** Validation de l'existance de l'utilisateur. */
+		if (rechercherParLogin(utilisateur.getLogin()) != null) {
+			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_EXISTANT);
+		}
 
 
-			/**
-			 * Validation de l'utilisateur: lève une exception si l'utilisateur est
-			 * invalide.
-			 */
-			validationServices.validerUtilisateur(utilisateur);
+		/**
+		 * Validation de l'utilisateur: lève une exception si l'utilisateur est
+		 * invalide.
+		 */
+		validationServices.validerUtilisateur(utilisateur);
 
-			/** Notification de l'événement de création */
-			notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.toString());
+		/** Notification de l'événement de création */
+		notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.toString());
 
-			/** Persistance de l'utilisateur. */
-			entityManager.persist(utilisateur);
+		/** Persistance de l'utilisateur. */
+		entityManager.persist(utilisateur);
 
 		return utilisateur;
 	}
@@ -90,11 +90,11 @@ public class UtilisateursServices {
 	 */
 	public Utilisateur rechercherParLogin(String login) {
 
-			log.info("=====> Recherche de l'utilisateur de login {}.", login);
+		log.info("=====> Recherche de l'utilisateur de login {}.", login);
 
-			if (StringUtils.isNotBlank(login)) {
-				return entityManager.find(Utilisateur.class, login);
-			}
+		if (StringUtils.isNotBlank(login)) {
+			return entityManager.find(Utilisateur.class, login);
+		}
 		return null;
 	}
 
@@ -133,7 +133,7 @@ public class UtilisateursServices {
 		}
 		return res;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED)	
 	public void changePassword(String login, String idUser, String new_pswd){
 		boolean droit = AuthentificationServices.utilVerif(idUser);
@@ -141,14 +141,8 @@ public class UtilisateursServices {
 			log.info("=====> Modification du mot de passe de l'utilisateur de login {}.", login);
 
 			if (StringUtils.isNotBlank(login)) {
-				Utilisateur temp = supprimer(login, "jean");
+				Utilisateur temp = entityManager.find(Utilisateur.class, login);
 				temp.setMotDePasse(new_pswd);
-				try {
-					creer(temp);
-				} catch (UtilisateurInvalideException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}
 		else{
@@ -156,5 +150,37 @@ public class UtilisateursServices {
 		}
 	}
 
+	@Transactional(propagation = Propagation.REQUIRED)	
+	public void changeInfos(String login,String idUser,Utilisateur user){
+		boolean auth = AuthentificationServices.utilVerif(idUser);
+		boolean admin = AuthentificationServices.adminVerif(idUser);
 
+		if(auth || admin){
+			log.info("=====> Modification de l'utilisateur de login {}.", login);
+			if (StringUtils.isNotBlank(login)) {
+				Utilisateur temp = entityManager.find(Utilisateur.class, login);
+				if(user.getAdresse()!=null){
+					temp.setAdresse(user.getAdresse());
+				}
+				if(user.getDateDeNaissance()!=null){
+					temp.setDateDeNaissance(user.getDateDeNaissance());
+				}				
+				if(user.getEmail()!=null){
+					temp.setEmail(user.getEmail());		
+				}		
+				if(user.getPrenom()!=null){
+					temp.setNom(user.getPrenom());
+				}			
+				if(user.getPrenom()!=null){
+					temp.setPrenom(user.getPrenom());
+				}
+				if(user.getProfils()!=null){
+					temp.setProfils(user.getProfils());
+				}
+			}
+		}
+		else{
+			notificationsServices.notifier("Impossible de modifier un utilisateur qui n'est pas vous si vous n'êtes pas administrateur.");
+		}
+	}
 }
