@@ -29,8 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UtilisateursServices {
 
 	/** Services d'authentification d'un utilisateur. */
-	// @Autowired
-	// private ValidationUtilisateurServices validationServices;
+	@Autowired
+	private AuthentificationUtilisateursServices AuthentificationServices;
 
 	/** Services de validation d'un utilisateur. */
 	@Autowired
@@ -53,28 +53,30 @@ public class UtilisateursServices {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Utilisateur creer(Utilisateur utilisateur) throws UtilisateurInvalideException {
-		log.info("=====> Création de l'utilisateur : {}.", utilisateur);
 
-		if (utilisateur == null) {
-			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
-		}
+			log.info("=====> Création de l'utilisateur : {}.", utilisateur);
 
-		/** Validation de l'existance de l'utilisateur. */
-		if (rechercherParLogin(utilisateur.getLogin()) != null) {
-			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_EXISTANT);
-		}
+			if (utilisateur == null) {
+				throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
+			}
 
-		/**
-		 * Validation de l'utilisateur: lève une exception si l'utilisateur est
-		 * invalide.
-		 */
-		validationServices.validerUtilisateur(utilisateur);
+			/** Validation de l'existance de l'utilisateur. */
+			if (rechercherParLogin(utilisateur.getLogin()) != null) {
+				throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_EXISTANT);
+			}
 
-		/** Notification de l'événement de création */
-		notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.toString());
 
-		/** Persistance de l'utilisateur. */
-		entityManager.persist(utilisateur);
+			/**
+			 * Validation de l'utilisateur: lève une exception si l'utilisateur est
+			 * invalide.
+			 */
+			validationServices.validerUtilisateur(utilisateur);
+
+			/** Notification de l'événement de création */
+			notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.toString());
+
+			/** Persistance de l'utilisateur. */
+			entityManager.persist(utilisateur);
 
 		return utilisateur;
 	}
@@ -87,12 +89,12 @@ public class UtilisateursServices {
 	 * @return Retourne l'utilisateur identifié par le login.
 	 */
 	public Utilisateur rechercherParLogin(String login) {
-		log.info("=====> Recherche de l'utilisateur de login {}.", login);
 
-		if (StringUtils.isNotBlank(login)) {
-			return entityManager.find(Utilisateur.class, login);
-		}
+			log.info("=====> Recherche de l'utilisateur de login {}.", login);
 
+			if (StringUtils.isNotBlank(login)) {
+				return entityManager.find(Utilisateur.class, login);
+			}
 		return null;
 	}
 
@@ -104,26 +106,55 @@ public class UtilisateursServices {
 	 */
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void supprimer(String login, String idUser) {
+	public Utilisateur supprimer(String login, String idUser) {
 
+		Utilisateur res = entityManager.find(Utilisateur.class, login);
 		if (StringUtils.isNotBlank(login)) {
-			// Trouve l'utilisateur par le login
-			// boolean droit =
-			// AuthentificationUtilisateursServices.varifDroits(idUser);
+			boolean droit = AuthentificationServices.adminVerif(idUser);
+			if(droit){
 
-			Utilisateur temp = entityManager.find(Utilisateur.class, login);
+				Utilisateur temp = entityManager.find(Utilisateur.class, login);
 
-			// Supprime l'utilisateur de la base si il existe
-			if (temp != null) {
-				entityManager.remove(temp);
-				/** Notification de l'événement de création */
-				notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString());
-			} else {
-				/** Notification de l'événement de création */
-				notificationsServices
-						.notifier("Impossible de supprimer l'utilisateur " + login + " car il n'existe pas.");
+				// Supprime l'utilisateur de la base si il existe
+				if (temp != null) {
+					entityManager.remove(temp);
+					/** Notification de l'événement de création */
+					notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString());
+				} else {
+					/** Notification de l'événement de création */
+					notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car il n'existe pas.");
+					return null;
+				}
+			}
+			else{
+				notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car vous n'avez pas les droits.");
+				return null;
 			}
 		}
+		return res;
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED)	
+	public void changePassword(String login, String idUser, String new_pswd){
+		boolean droit = AuthentificationServices.utilVerif(idUser);
+		if(droit){
+			log.info("=====> Modification du mot de passe de l'utilisateur de login {}.", login);
+
+			if (StringUtils.isNotBlank(login)) {
+				Utilisateur temp = supprimer(login, "jean");
+				temp.setMotDePasse(new_pswd);
+				try {
+					creer(temp);
+				} catch (UtilisateurInvalideException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		else{
+			notificationsServices.notifier("Impossible de modifier votre mot de passe car vous n'êtes pas dans la base.");
+		}
+	}
+
 
 }

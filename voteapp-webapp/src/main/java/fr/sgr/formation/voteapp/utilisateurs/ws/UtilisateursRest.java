@@ -43,7 +43,15 @@ public class UtilisateursRest {
 
 		return utilisateursServices.rechercherParLogin(login);
 	}
+	
+	
+	@RequestMapping(value="/mdp",method = RequestMethod.PUT)
+	public void changePassword(@PathVariable String login, @RequestParam String idUser,@RequestBody String new_pswd) throws UtilisateurInvalideException {
+		log.info("=====> Récupération de l'utilisateur de login {}.", login);
 
+		utilisateursServices.changePassword(login,idUser,new_pswd);
+	}
+	
 	@ExceptionHandler({ UtilisateurInvalideException.class })
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public DescriptionErreur gestionErreur(UtilisateurInvalideException exception) {
