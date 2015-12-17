@@ -7,6 +7,10 @@ import lombok.Getter;
  * Exception levée pour indiquer qu'un utilisateur est invalide.
  */
 public class UtilisateurInvalideException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3959709365968239401L;
 	/** Identifie l'erreur. */
 	@Getter
 	private ErreurUtilisateur erreur;
@@ -28,7 +32,8 @@ public class UtilisateurInvalideException extends Exception {
 		PRENOM_OBLIGATOIRE("Le prénom de l'utilisateur est obligatoire."),
 		LOGIN_OBLIGATOIRE("Le login est obligatoire."),
 		MDP_OBLIGATOIRE("Le mot de passe est obligatoire."),
-		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système.");
+		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système."),
+		UTILISATEUR_INEXISTANT("L'utilisateur n'existe pas");
 
 		@Getter
 		public String message;

@@ -1,14 +1,19 @@
 package fr.sgr.formation.voteapp.vote.services;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.sgr.formation.voteapp.elections.modele.Election;
+import fr.sgr.formation.voteapp.elections.services.ElectionsServices;
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
+import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
+import fr.sgr.formation.voteapp.vote.modele.ChoixVote;
 import fr.sgr.formation.voteapp.vote.modele.Vote;
 import fr.sgr.formation.voteapp.vote.services.VoteInvalideException.ErreurVote;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +28,10 @@ public class VoteServices {
 	/** Services de notification des événements. */
 	@Autowired
 	private NotificationsServices notificationsServices;
+	@Autowired
+	private UtilisateursServices utilisateursServices;
+	@Autowired
+	private ElectionsServices electionsServices;
 
 	@Autowired
 	private EntityManager entityManager;
@@ -38,30 +47,53 @@ public class VoteServices {
 	 */
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Vote creer(Vote vote) throws VoteInvalideException {
+	public Vote creer(String titre, String choix, String idUser) throws VoteInvalideException {
 
-		log.info("=====> Création du vote : {}.", vote);
+		log.info("=====> Création du vote pour l'élection : {}.", titre);
+		Query query = entityManager.createNativeQuery("SELECT login FROM UTILISATEUR where login=?");
+		query.setParameter(1, idUser);
 
-		if (vote == null) {
-			throw new VoteInvalideException(ErreurVote.VOTE_OBLIGATOIRE);
+		if (utilisateursServices.rechercherParLogin(query.getSingleResult().toString()) == null) {
+			throw new VoteInvalideException(ErreurVote.UTILISATEUR_NON_ENREGISTRE);
 		}
 
-		/** Validation de l'existance du vote. */
-		if (rechercherParVoteKey(vote.getKey()) != null) {
-			throw new VoteInvalideException(ErreurVote.VOTE_EXISTANT);
+		Vote vote = new Vote();
+		if (choix.toLowerCase().equals("oui")) {
+			vote.setChoix(ChoixVote.OUI);
+		} else if (choix.toLowerCase().equals("non")) {
+			vote.setChoix(ChoixVote.NON);
+		} else {
+			throw new VoteInvalideException(ErreurVote.CHOIX_NON_AUTORISE);
 		}
+
+		vote.setUtilisateur(utilisateursServices.rechercherParLogin(idUser));
+
+		Query query2 = entityManager.createNativeQuery("SELECT titre FROM ELECTION WHERE titre=?");
+		query2.setParameter(1, titre);
+
+		if (electionsServices.rechercherParTitre(query2.getSingleResult().toString()) == null) {
+			throw new VoteInvalideException(ErreurVote.ELECTION_INEXISTANTE);
+		}
+
+		Election elec = electionsServices.rechercherParTitre(titre);
+		if (elec.isActiveElection() == false) {
+			throw new VoteInvalideException(ErreurVote.ELECTION_CLOTURE);
+		}
+
+		vote.setElection(electionsServices.rechercherParTitre(titre));
 
 		/**
 		 * Validation du vote : lève une exception si le vote est invalide.
 		 */
 		validationServices.validerVote(vote);
 
-		/** Notification de l'événement de création */
-		notificationsServices.notifier("Création du vote: " + vote.toString(),
-				"Création vote "+vote.toString(),TypesTraces.CREATION,TypesTraces.SUCCES,null);
-
 		/** Persistance du vote. */
 		entityManager.persist(vote);
+
+		/** Notification de l'événement de création */
+		notificationsServices.notifier("Création du vote: " + vote.toString(),
+				"Création vote " + vote.getKey(), TypesTraces.CREATION, TypesTraces.SUCCES,
+				vote.getUtilisateur().getLogin());
 
 		return vote;
 	}
