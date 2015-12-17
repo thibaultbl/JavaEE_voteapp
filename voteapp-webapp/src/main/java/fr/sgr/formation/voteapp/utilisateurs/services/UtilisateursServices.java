@@ -1,6 +1,9 @@
 package fr.sgr.formation.voteapp.utilisateurs.services;
 
+import java.util.Collection;
+
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
+import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
+import fr.sgr.formation.voteapp.utilisateurs.modele.Ville;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException.ErreurUtilisateur;
 import lombok.extern.slf4j.Slf4j;
 
@@ -137,6 +142,42 @@ public class UtilisateursServices {
 			}
 		}
 		return res;
+	}
+	
+	/*public Utilisateur rechercherUserNom(String nom) {
+
+		if (StringUtils.isNotBlank(nom)) {
+			return entityManager.find(Utilisateur.class, nom);
+		}
+		return null;
+	}
+	
+	public Utilisateur rechercherUserPrenom(String prenom) {
+
+		if (StringUtils.isNotBlank(prenom)) {
+			return entityManager.find(Utilisateur.class, prenom);
+		}
+		return null;
+	}
+	
+	public Utilisateur rechercherUserVille(Ville ville) {
+
+		if (StringUtils.isNotBlank(ville.getNom())) {
+			return entityManager.find(Utilisateur.class, ville.getNom());
+		}
+		return null;
+	}*/
+	
+	public Collection<Utilisateur> rechercherUserProfil(String login) {
+
+		if (StringUtils.isNotBlank(login)) {
+			String queryString = "SELECT u FROM UTILISATEUR AS u, PROFILS_UTILISATEURS AS up WHERE up.PROFILS = ? AND u.LOGIN = up.LOGIN_UTILISATEUR";
+			Query query = entityManager.createQuery(queryString);
+			query.setParameter(1, login);
+			
+			return (Collection<Utilisateur>) query.getResultList();
+		}
+		return null;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)	
