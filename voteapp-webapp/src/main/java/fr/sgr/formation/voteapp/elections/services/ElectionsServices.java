@@ -1,6 +1,7 @@
 package fr.sgr.formation.voteapp.elections.services;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,14 +67,16 @@ public class ElectionsServices {
 			validationServices.validerElection(election);
 
 			/** Notification de l'événement de création */
-			notificationsServices.notifier("Création de l'election: " + election.getTitre(),"Création éléction " + election.getTitre(),TypesTraces.CREATION,TypesTraces.SUCCES,idUser);
+			notificationsServices.notifier("Création de l'election: " + election.getTitre(),
+					"Création éléction " + election.getTitre(), TypesTraces.CREATION, TypesTraces.SUCCES, idUser);
 
 			/** Persistance de l'election. */
 			entityManager.persist(election);
 		} else {
 			notificationsServices
-					.notifier("Impossible de créer l'élection " + election.getTitre()+" car vous n'êtes pas gérant",
-							"Création impossible / Utilisateur non gérant",TypesTraces.CREATION,TypesTraces.ECHEC,idUser);
+					.notifier("Impossible de créer l'élection " + election.getTitre() + " car vous n'êtes pas gérant",
+							"Création impossible / Utilisateur non gérant", TypesTraces.CREATION, TypesTraces.ECHEC,
+							idUser);
 		}
 		return election;
 	}
@@ -116,7 +119,7 @@ public class ElectionsServices {
 
 				/** Notification de l'événement de cloture */
 				notificationsServices.notifier("Cloture de l'election: " + election.getTitre(),
-						"Cloture éléction",TypesTraces.CLOTURE,TypesTraces.SUCCES,idUser);
+						"Cloture éléction", TypesTraces.CLOTURE, TypesTraces.SUCCES, idUser);
 				entityManager.remove(election);
 				election.setActiveElection(false);
 				creer(election, idUser);
@@ -124,13 +127,13 @@ public class ElectionsServices {
 			} else {
 				notificationsServices
 						.notifier("Impossible de cloturer l'élection " + titre + " car vous n'êtes pas le créateur",
-								"Cloture impossible / Pas créateur",TypesTraces.CLOTURE,TypesTraces.ECHEC,idUser);
+								"Cloture impossible / Pas créateur", TypesTraces.CLOTURE, TypesTraces.ECHEC, idUser);
 			}
 
 		} else {
 			notificationsServices
 					.notifier("Impossible de cloturer l'élection " + titre + " car vous n'êtes pas gérant",
-							"Cloture impossible / Pas gérant",TypesTraces.CLOTURE,TypesTraces.ECHEC,idUser);
+							"Cloture impossible / Pas gérant", TypesTraces.CLOTURE, TypesTraces.ECHEC, idUser);
 
 		}
 
@@ -178,7 +181,7 @@ public class ElectionsServices {
 
 				/** Notification de l'événement de cloture */
 				notificationsServices.notifier("Modification de l'election: " + election.getTitre(),
-						"Modification éléction",TypesTraces.MODIFICATION,TypesTraces.SUCCES,idUser);
+						"Modification éléction", TypesTraces.MODIFICATION, TypesTraces.SUCCES, idUser);
 				entityManager.remove(election);
 				election.setActiveElection(false);
 
@@ -187,13 +190,15 @@ public class ElectionsServices {
 			} else {
 				notificationsServices
 						.notifier("Impossible de modifier l'élection " + titre + " car vous n'êtes pas le créateur",
-								"Modification impossible / Pas créateur",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
+								"Modification impossible / Pas créateur", TypesTraces.MODIFICATION, TypesTraces.ECHEC,
+								idUser);
 			}
 
 		} else {
 			notificationsServices
 					.notifier("Impossible de modifier l'élection " + titre + " car vous n'êtes pas gérant",
-							"Modification impossible / Pas gérant",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
+							"Modification impossible / Pas gérant", TypesTraces.MODIFICATION, TypesTraces.ECHEC,
+							idUser);
 
 		}
 
@@ -240,19 +245,20 @@ public class ElectionsServices {
 
 					/** Notification de l'événement de création */
 					notificationsServices.notifier("Suppression de l'election: " + election.getTitre(),
-							"Suppression éléction",TypesTraces.SUPRESSION,TypesTraces.SUCCES,idUser);
+							"Suppression éléction", TypesTraces.SUPRESSION, TypesTraces.SUCCES, idUser);
 					entityManager.remove(election);
 				}
 			} else {
 				notificationsServices
 						.notifier("Impossible de supprimer l'élection " + titre + " car vous n'êtes pas le créateur",
-								"Suppression impossible / Pas créateur",TypesTraces.SUPRESSION,TypesTraces.ECHEC,idUser);
+								"Suppression impossible / Pas créateur", TypesTraces.SUPRESSION, TypesTraces.ECHEC,
+								idUser);
 			}
 
 		} else {
 			notificationsServices
 					.notifier("Impossible de supprimer l'élection " + titre + " car vous n'êtes pas gérant",
-							"Suppression impossible / Pas gérant",TypesTraces.SUPRESSION,TypesTraces.ECHEC,idUser);
+							"Suppression impossible / Pas gérant", TypesTraces.SUPRESSION, TypesTraces.ECHEC, idUser);
 
 		}
 
@@ -278,4 +284,23 @@ public class ElectionsServices {
 
 		return null;
 	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public String calculerResultat(String titre) throws ElectionInvalideException {
+		/** Validation de l'existance de l'election. */
+		String resultat;
+		float res;
+		Query query = entityManager
+				.createNativeQuery("SELECT AVG(Cast(CHOIX as float)) as moy FROM VOTE where ELECTION_TITRE=?");
+		query.setParameter(1, titre);
+		resultat = query.getSingleResult().toString();
+		/*
+		 * res = (float) query.getSingleResult(); if (res > 0.5) { resultat =
+		 * "le Non l'emporte avec " + resultat + " des suffrages"; } else {
+		 * resultat = "le Oui l'emporte avec " + resultat + " des suffrages"; }
+		 */
+
+		return resultat;
+	}
+
 }

@@ -59,6 +59,13 @@ public class ElectionsRest {
 		return electionsServices.rechercherParTitre(titre);
 	}
 
+	@RequestMapping(value = "/resultat", method = RequestMethod.GET)
+	public String resultat(@PathVariable String titre) throws ElectionInvalideException {
+		log.info("=====> Résultat de l'élection de titre {}.", titre);
+
+		return electionsServices.calculerResultat(titre);
+	}
+
 	@ExceptionHandler({ ElectionInvalideException.class })
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public DescriptionErreur gestionErreur(ElectionInvalideException exception) {
