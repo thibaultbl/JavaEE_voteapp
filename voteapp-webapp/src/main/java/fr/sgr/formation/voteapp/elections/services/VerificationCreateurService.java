@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.elections.modele.Election;
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
+import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 
 @Service
@@ -31,10 +32,12 @@ public class VerificationCreateurService {
 			Election election = entityManager.find(Election.class, titre);
 			// Vérifie si l'utilisateur existe en base
 			if (user != null) {
-				notificationsServices.notifier("Utilisateur : " + user.getLogin());
 				if (user.getLogin().equals(login)) { // Forcément vraie si
 														// l'utilisateur existe
 														// en base...
+					notificationsServices
+					.notifier("Authentification de l'utilisateur " + login + " validée.",
+							"Utilisateur "+login+" authentifié",TypesTraces.AUTHENTIFICATION,TypesTraces.SUCCES,login);
 					if (election.getProprietaire().getLogin().equals(login)) {
 						droit = true;
 					}
@@ -43,7 +46,8 @@ public class VerificationCreateurService {
 			} else {
 				/** Notification de l'échec de l'authentification */
 				notificationsServices
-						.notifier("Impossible d'utiliser l'utilisateur " + login + " car il n'existe pas.");
+						.notifier("Impossible d'utiliser l'utilisateur " + login + " car il n'existe pas.",
+								"Utilisateur "+login+" non existant",TypesTraces.AUTHENTIFICATION,TypesTraces.ECHEC,null);
 			}
 		}
 		return droit;

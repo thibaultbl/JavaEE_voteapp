@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
+import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException.ErreurUtilisateur;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,8 @@ public class UtilisateursServices {
 		validationServices.validerUtilisateur(utilisateur);
 
 		/** Notification de l'événement de création */
-		notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.toString());
+		notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.getLogin(),
+				"Création de l'utilisateur "+ utilisateur.getLogin(),TypesTraces.CREATION,TypesTraces.SUCCES,utilisateur.toString());
 
 		/** Persistance de l'utilisateur. */
 		entityManager.persist(utilisateur);
@@ -119,15 +121,18 @@ public class UtilisateursServices {
 				if (temp != null) {
 					entityManager.remove(temp);
 					/** Notification de l'événement de création */
-					notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString());
+					notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString(),
+							"Suppression de l'utilisateur "+ temp.toString(),TypesTraces.SUPRESSION,TypesTraces.SUCCES,idUser);
 				} else {
 					/** Notification de l'événement de création */
-					notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car il n'existe pas.");
+					notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car il n'existe pas.",
+							"Supression de "+ login + "impossible / existe pas",TypesTraces.SUPRESSION,TypesTraces.ECHEC,idUser);
 					return null;
 				}
 			}
 			else{
-				notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car vous n'avez pas les droits.");
+				notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car vous n'avez pas les droits.",
+						"Supression "+ login +" impossible / pas admin",TypesTraces.SUPRESSION,TypesTraces.ECHEC,idUser);
 				return null;
 			}
 		}
@@ -138,7 +143,8 @@ public class UtilisateursServices {
 	public void changePassword(String login, String idUser, String new_pswd){
 		boolean droit = AuthentificationServices.utilVerif(idUser);
 		if(droit){
-			log.info("=====> Modification du mot de passe de l'utilisateur de login {}.", login);
+			notificationsServices.notifier("Modification du mot de passe de l'utilisateur "+login+".",
+					"Modification mot de passe "+login,TypesTraces.MODIFICATION,TypesTraces.SUCCES,idUser);
 
 			if (StringUtils.isNotBlank(login)) {
 				Utilisateur temp = entityManager.find(Utilisateur.class, login);
@@ -146,7 +152,8 @@ public class UtilisateursServices {
 			}
 		}
 		else{
-			notificationsServices.notifier("Impossible de modifier votre mot de passe car vous n'êtes pas dans la base.");
+			notificationsServices.notifier("Impossible de modifier votre mot de passe car vous n'êtes pas dans la base.",
+					"Modification mot de passe impossible / pas dans la base",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
 		}
 	}
 
@@ -180,7 +187,8 @@ public class UtilisateursServices {
 			}
 		}
 		else{
-			notificationsServices.notifier("Impossible de modifier un utilisateur qui n'est pas vous si vous n'êtes pas administrateur.");
+			notificationsServices.notifier("Impossible de modifier un utilisateur qui n'est pas vous si vous n'êtes pas administrateur.",
+					"Modification "+login+" impossible / pas admin ou pas lui",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
 		}
 	}
 }

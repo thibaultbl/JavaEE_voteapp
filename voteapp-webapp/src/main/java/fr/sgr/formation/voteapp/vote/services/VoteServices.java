@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
+import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
 import fr.sgr.formation.voteapp.vote.modele.Vote;
 import fr.sgr.formation.voteapp.vote.services.VoteInvalideException.ErreurVote;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,8 @@ public class VoteServices {
 		validationServices.validerVote(vote);
 
 		/** Notification de l'événement de création */
-		notificationsServices.notifier("Création du vote: " + vote.toString());
+		notificationsServices.notifier("Création du vote: " + vote.toString(),
+				"Création vote "+vote.toString(),TypesTraces.CREATION,TypesTraces.SUCCES,null);
 
 		/** Persistance du vote. */
 		entityManager.persist(vote);

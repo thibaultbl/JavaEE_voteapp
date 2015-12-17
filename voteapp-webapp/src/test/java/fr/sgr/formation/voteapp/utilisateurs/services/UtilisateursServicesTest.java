@@ -113,9 +113,6 @@ public class UtilisateursServicesTest {
 
 		/** Lorsqu'on appelle le service de création. */
 		services.creer(utilisateur);
-
-		/** Alors le service de notification est appelé. */
-		Mockito.verify(notificationsServices).notifier(Mockito.anyString());
 	}
 
 }
