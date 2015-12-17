@@ -26,6 +26,6 @@ public class NotificationsServices {
 	 */
 	public void notifier(String message,String desc, TypesTraces type, TypesTraces result, String idUser) {
 		log.info("[EVT]: " + message);
-		traceServices.creerTrace("", null, null, idUser);
+		traceServices.creerTrace(desc, type, result, idUser);
 	}
 }

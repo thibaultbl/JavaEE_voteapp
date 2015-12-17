@@ -66,7 +66,7 @@ public class ElectionsServices {
 			validationServices.validerElection(election);
 
 			/** Notification de l'événement de création */
-			notificationsServices.notifier("Création de l'election: " + election.toString(),"Création éléction " + election.toString(),TypesTraces.CREATION,TypesTraces.SUCCES,idUser);
+			notificationsServices.notifier("Création de l'election: " + election.getTitre(),"Création éléction " + election.getTitre(),TypesTraces.CREATION,TypesTraces.SUCCES,idUser);
 
 			/** Persistance de l'election. */
 			entityManager.persist(election);
@@ -115,7 +115,7 @@ public class ElectionsServices {
 				validationServices.validerElection(election);
 
 				/** Notification de l'événement de cloture */
-				notificationsServices.notifier("Cloture de l'election: " + election.toString(),
+				notificationsServices.notifier("Cloture de l'election: " + election.getTitre(),
 						"Cloture éléction",TypesTraces.CLOTURE,TypesTraces.SUCCES,idUser);
 				entityManager.remove(election);
 				election.setActiveElection(false);
@@ -177,7 +177,7 @@ public class ElectionsServices {
 				validationServices.validerElection(election);
 
 				/** Notification de l'événement de cloture */
-				notificationsServices.notifier("Modification de l'election: " + election.toString(),
+				notificationsServices.notifier("Modification de l'election: " + election.getTitre(),
 						"Modification éléction",TypesTraces.MODIFICATION,TypesTraces.SUCCES,idUser);
 				entityManager.remove(election);
 				election.setActiveElection(false);
@@ -239,7 +239,7 @@ public class ElectionsServices {
 					validationServices.validerElection(election);
 
 					/** Notification de l'événement de création */
-					notificationsServices.notifier("Suppression de l'election: " + election.toString(),
+					notificationsServices.notifier("Suppression de l'election: " + election.getTitre(),
 							"Suppression éléction",TypesTraces.SUPRESSION,TypesTraces.SUCCES,idUser);
 					entityManager.remove(election);
 				}

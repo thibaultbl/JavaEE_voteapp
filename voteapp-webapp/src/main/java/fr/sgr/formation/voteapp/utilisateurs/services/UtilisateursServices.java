@@ -121,8 +121,8 @@ public class UtilisateursServices {
 				if (temp != null) {
 					entityManager.remove(temp);
 					/** Notification de l'événement de création */
-					notificationsServices.notifier("Suppression de l'utilisateur: " + temp.toString(),
-							"Suppression de l'utilisateur "+ temp.toString(),TypesTraces.SUPRESSION,TypesTraces.SUCCES,idUser);
+					notificationsServices.notifier("Suppression de l'utilisateur: " + temp.getLogin(),
+							"Suppression de l'utilisateur "+ temp.getLogin(),TypesTraces.SUPRESSION,TypesTraces.SUCCES,idUser);
 				} else {
 					/** Notification de l'événement de création */
 					notificationsServices.notifier("Impossible de supprimer l'utilisateur " + login + " car il n'existe pas.",
