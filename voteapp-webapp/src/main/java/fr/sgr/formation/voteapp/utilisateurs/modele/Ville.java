@@ -1,5 +1,6 @@
 package fr.sgr.formation.voteapp.utilisateurs.modele;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
 public class Ville {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Long id;
 	private String codePostal;
 	private String nom;
