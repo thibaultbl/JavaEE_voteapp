@@ -27,6 +27,8 @@ import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
 import fr.sgr.formation.voteapp.utilisateurs.services.VilleService;
 import fr.sgr.formation.voteapp.vote.modele.ChoixVote;
 import fr.sgr.formation.voteapp.vote.modele.Vote;
+import fr.sgr.formation.voteapp.vote.services.VoteInvalideException;
+import fr.sgr.formation.voteapp.vote.services.VoteServices;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -41,9 +43,12 @@ public class Initialisation {
 	@Autowired
 	private ElectionsServices electionServices;
 
+	@Autowired
+	private VoteServices voteServices;
+
 	@PostConstruct
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void init() {
+	public void init() throws VoteInvalideException {
 		log.info("Initialisation des villes par défaut dans la base...");
 
 		Ville rennes = new Ville();
@@ -88,10 +93,7 @@ public class Initialisation {
 			e.printStackTrace();
 		}
 		List<Vote> votes = new ArrayList<Vote>();
-		Election elec = new Election("Election test", "ceci est une élection test", true, admin);
-
-		Vote vote1 = new Vote(5, admin, elec, ChoixVote.OUI);
-		votes.add(vote1);
+		Election elec = new Election("ElectionTest", "ceci est une élection test", true, admin);
 
 		// Initialisation d'une election
 		log.info("Creation d'une élection");
@@ -101,6 +103,14 @@ public class Initialisation {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		Vote vote1 = new Vote();
+		vote1.setChoix(ChoixVote.OUI);
+		vote1.setElection(elec);
+		vote1.setUtilisateur(admin);
+		votes.add(vote1);
+		voteServices.creer(elec.getTitre(), "oui", admin.getLogin());
+
 		/*
 		 * try { electionServices.creer(elec, "jean");
 		 * electionServices.cloturer(elec.getTitre(), "jean");
