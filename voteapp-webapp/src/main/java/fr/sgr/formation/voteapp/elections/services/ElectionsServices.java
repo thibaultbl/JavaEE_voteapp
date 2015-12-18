@@ -289,16 +289,20 @@ public class ElectionsServices {
 	public String calculerResultat(String titre) throws ElectionInvalideException {
 		/** Validation de l'existance de l'election. */
 		String resultat;
+		String resultat2;
 		float res;
 		Query query = entityManager
 				.createNativeQuery("SELECT AVG(Cast(CHOIX as float)) as moy FROM VOTE where ELECTION_TITRE=?");
 		query.setParameter(1, titre);
 		resultat = query.getSingleResult().toString();
-		/*
-		 * res = (float) query.getSingleResult(); if (res > 0.5) { resultat =
-		 * "le Non l'emporte avec " + resultat + " des suffrages"; } else {
-		 * resultat = "le Oui l'emporte avec " + resultat + " des suffrages"; }
-		 */
+
+		res = Float.parseFloat(query.getSingleResult().toString());
+		resultat2 = Float.toString(1 - res);
+		if (res > 0.5) {
+			resultat = "le Non l'emporte avec " + resultat + " des suffrages";
+		} else {
+			resultat = "le Oui l'emporte avec " + resultat2 + " des suffrages";
+		}
 
 		return resultat;
 	}
