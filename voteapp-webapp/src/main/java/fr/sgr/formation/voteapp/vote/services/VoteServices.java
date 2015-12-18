@@ -75,6 +75,15 @@ public class VoteServices {
 			throw new VoteInvalideException(ErreurVote.ELECTION_INEXISTANTE);
 		}
 
+		Query query3 = entityManager.createNativeQuery(
+				"SELECT UTILISATEUR_LOGIN FROM VOTE WHERE (UTILISATEUR_LOGIN=:username) AND (ELECTION_TITRE=:titreE)");
+		query3.setParameter("username", idUser);
+		query3.setParameter("titreE", titre);
+
+		if (query3.getResultList().isEmpty() == false) {
+			throw new VoteInvalideException(ErreurVote.DEJA_VOTE);
+		}
+
 		Election elec = electionsServices.rechercherParTitre(titre);
 		if (elec.isActiveElection() == false) {
 			throw new VoteInvalideException(ErreurVote.ELECTION_CLOTURE);

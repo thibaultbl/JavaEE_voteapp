@@ -27,6 +27,7 @@ public class VoteInvalideException extends Exception {
 		UTILISATEUR_NON_ENREGISTRE("Cette utilisateur est non enregistré, il ne peut donc pas voter"),
 		ELECTION_INEXISTANTE("Cette élection n'existe pas"),
 		ELECTION_CLOTURE("Cette élection est cloturé"),
+		DEJA_VOTE("Vous avez déja voté pour cette élection"),
 		CHOIX_NON_AUTORISE("Ce choix n'est pas autorisé, veuillez choisir oui ou non");
 
 		@Getter
