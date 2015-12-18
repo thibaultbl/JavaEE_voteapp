@@ -1,7 +1,5 @@
 package fr.sgr.formation.voteapp.utilisateurs.ws;
 
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
@@ -48,10 +45,10 @@ public class UtilisateursRest {
 	}
 	
 	@RequestMapping(value="/list/",method = RequestMethod.GET)
-	public Collection<Utilisateur> lireUserProfil(@PathVariable String login) {
+	public String lireUserProfil(@PathVariable String login, @RequestParam String idUser) {
 		log.info("=====> Récupération des utilisateurs avec le profil {}.", login);
 
-		return utilisateursServices.rechercherUserProfil(login);
+		return utilisateursServices.rechercherUserProfil(login,idUser);
 	}
 	
 	@RequestMapping(value="/mdp",method = RequestMethod.PUT)

@@ -8,5 +8,6 @@ public enum TypesTraces{
 	VOTE,
 	SUCCES,
 	AUTHENTIFICATION,
+	RECHERCHE,
 	ECHEC;
 }

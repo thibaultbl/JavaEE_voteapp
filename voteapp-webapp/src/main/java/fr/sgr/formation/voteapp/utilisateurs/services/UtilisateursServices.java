@@ -1,7 +1,5 @@
 package fr.sgr.formation.voteapp.utilisateurs.services;
 
-import java.util.Collection;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -13,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
-import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
-import fr.sgr.formation.voteapp.utilisateurs.modele.Ville;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException.ErreurUtilisateur;
 import lombok.extern.slf4j.Slf4j;
 
@@ -143,7 +139,7 @@ public class UtilisateursServices {
 		}
 		return res;
 	}
-	
+
 	/*public Utilisateur rechercherUserNom(String nom) {
 
 		if (StringUtils.isNotBlank(nom)) {
@@ -151,7 +147,7 @@ public class UtilisateursServices {
 		}
 		return null;
 	}
-	
+
 	public Utilisateur rechercherUserPrenom(String prenom) {
 
 		if (StringUtils.isNotBlank(prenom)) {
@@ -159,7 +155,7 @@ public class UtilisateursServices {
 		}
 		return null;
 	}
-	
+
 	public Utilisateur rechercherUserVille(Ville ville) {
 
 		if (StringUtils.isNotBlank(ville.getNom())) {
@@ -167,17 +163,56 @@ public class UtilisateursServices {
 		}
 		return null;
 	}*/
-	
-	public Collection<Utilisateur> rechercherUserProfil(String login) {
 
+	public String rechercherUserProfil(String login, String idUser) {
+
+		boolean droit = AuthentificationServices.adminVerif(idUser);
 		if (StringUtils.isNotBlank(login)) {
-			String queryString = "SELECT u FROM UTILISATEUR AS u, PROFILS_UTILISATEURS AS up WHERE up.PROFILS = ? AND u.LOGIN = up.LOGIN_UTILISATEUR";
-			Query query = entityManager.createQuery(queryString);
-			query.setParameter(1, login);
-			
-			return (Collection<Utilisateur>) query.getResultList();
+
+			if(droit){
+				if(login.equals("all")){
+					String queryString = "SELECT * FROM UTILISATEUR";
+					Query query = entityManager.createNativeQuery(queryString, Utilisateur.class);
+
+
+					String result="";
+					for (int i=0;i<query.getResultList().size();i++){
+						result += query.getResultList().get(i).toString();
+						result+="</br></br>";
+					}
+
+					notificationsServices.notifier("Affichage de tous les utilisateurs",
+							"Affichage de tous les utilisateurs",TypesTraces.RECHERCHE,TypesTraces.SUCCES,idUser);
+					return result;
+				}
+				else{
+					String queryString = "SELECT * FROM UTILISATEUR AS u, PROFILS_UTILISATEURS AS up WHERE up.PROFILS = ? AND u.LOGIN = up.LOGIN_UTILISATEUR";
+					Query query = entityManager.createNativeQuery(queryString, Utilisateur.class);
+					query.setParameter(1, login);
+
+
+					String result="";
+					for (int i=0;i<query.getResultList().size();i++){
+						result += query.getResultList().get(i).toString();
+						result+="</br></br>";
+					}
+
+					notificationsServices.notifier("Affichage des utilisateurs "+login,
+							"Affichage des utilisateurs "+login,TypesTraces.RECHERCHE,TypesTraces.SUCCES,idUser);
+					return result;
+				}
+			}
+			else{
+				notificationsServices.notifier("Impossible d'afficher les utilisateurs " + login + " car vous n'avez pas les droits.",
+						"Affichage "+ login +" impossible / pas admin",TypesTraces.RECHERCHE,TypesTraces.ECHEC,idUser);
+				return null;
+			}
 		}
-		return null;
+		else{
+			notificationsServices.notifier("Impossible d'afficher des utilisateurs vides",
+					"Affichage utlisateur vide impossible",TypesTraces.RECHERCHE,TypesTraces.ECHEC,idUser);
+			return null;
+		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)	
