@@ -56,27 +56,39 @@ public class UtilisateursServices {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Utilisateur creer(Utilisateur utilisateur) throws UtilisateurInvalideException {
 
-		log.info("=====> Création de l'utilisateur : {}.", utilisateur);
-
 		if (utilisateur == null) {
+			/** Notification de l'événement de création */
+			notificationsServices.notifier("Création d'utilisateur null",
+					"Création d'utilisateur null",TypesTraces.CREATION,TypesTraces.ECHEC,utilisateur.getLogin());
 			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_OBLIGATOIRE);
 		}
 
 		/** Validation de l'existance de l'utilisateur. */
-		if (rechercherParLogin(utilisateur.getLogin()) != null) {
+		if (rechercherParLogin(utilisateur.getLogin(),"admin","admin") != null) {
+			/** Notification de l'événement de création */
+			notificationsServices.notifier("L'utilisateur "+utilisateur.getLogin()+ " existe déjà.",
+					"L'utilisateur "+utilisateur.getLogin()+ " existe déjà.",TypesTraces.CREATION,TypesTraces.ECHEC,utilisateur.getLogin());
 			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_EXISTANT);
 		}
 
+		/**Gestion des logins interdits**/
+		if (utilisateur.getLogin().equals("ADMINISTRATEUR") || utilisateur.getLogin().equals("UTILISATEUR") || utilisateur.getLogin().equals("GERANT") || utilisateur.getLogin().equals("all")) {
+			/** Notification de l'événement de création */
+			notificationsServices.notifier("Impossible de créer un utilisateur de login " +utilisateur.getLogin() ,
+					"login"+utilisateur.getLogin()+" impossible",TypesTraces.CREATION,TypesTraces.ECHEC,utilisateur.getLogin());
+			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_IMPOSSIBLE);
+		}
 
 		/**
 		 * Validation de l'utilisateur: lève une exception si l'utilisateur est
 		 * invalide.
 		 */
+
 		validationServices.validerUtilisateur(utilisateur);
 
 		/** Notification de l'événement de création */
 		notificationsServices.notifier("Création de l'utilisateur: " + utilisateur.getLogin(),
-				"Création de l'utilisateur "+ utilisateur.getLogin(),TypesTraces.CREATION,TypesTraces.SUCCES,utilisateur.toString());
+				"Création de l'utilisateur "+ utilisateur.getLogin(),TypesTraces.CREATION,TypesTraces.SUCCES,utilisateur.getLogin());
 
 		/** Persistance de l'utilisateur. */
 		entityManager.persist(utilisateur);
@@ -90,15 +102,53 @@ public class UtilisateursServices {
 	 * @param login
 	 *            Login identifiant l'utilisateur.
 	 * @return Retourne l'utilisateur identifié par le login.
+	 * @throws UtilisateurInvalideException 
 	 */
-	public Utilisateur rechercherParLogin(String login) {
-
-		log.info("=====> Recherche de l'utilisateur de login {}.", login);
+	public Utilisateur rechercherParLogin(String login, String idUser, String mdp) throws UtilisateurInvalideException {
 
 		if (StringUtils.isNotBlank(login)) {
-			return entityManager.find(Utilisateur.class, login);
+			boolean admin = AuthentificationServices.adminVerif(idUser);
+			boolean auth = login.equals(idUser);
+
+			if(auth || admin){
+				boolean mdpOK = AuthentificationServices.mdpVerif(idUser,mdp);
+				if(mdpOK){
+					/** Notification de l'événement de recherche */
+					notificationsServices.notifier("Affichage des infos de : " + login,
+							"Affichage des infos de : " + login,TypesTraces.RECHERCHE,TypesTraces.SUCCES,login);
+					Utilisateur temp =  entityManager.find(Utilisateur.class, login);
+					if (temp!=null){
+						return temp;
+					}
+					else{
+						if(login.equals("admin")){
+							return null;
+						}
+						else{
+							
+						}
+						notificationsServices.notifier("L'utilisateur" + login+ " n'existe pas." ,
+								"L'utilisateur" + login+ " n'existe pas.",TypesTraces.RECHERCHE,TypesTraces.ECHEC,login);
+						throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_INEXISTANT);
+					}
+				}
+				else{
+					notificationsServices.notifier("Affichage des infos de " + login+ " impossible : mauvais mot de passe." ,
+							"Affichage " + login+" impossible / mauvais mdp",TypesTraces.RECHERCHE,TypesTraces.ECHEC,login);
+					throw new UtilisateurInvalideException(ErreurUtilisateur.MAUVAIS_MDP);
+				}
+			}
+			else{
+				notificationsServices.notifier("Affichage des infos de " + login+ " impossible : pas lui" ,
+						"Affichage " + login+" impossible / pas lui ou pas admin",TypesTraces.RECHERCHE,TypesTraces.ECHEC,login);
+				return null;
+			}
+
+		}else{
+			notificationsServices.notifier("Affichage d'un utilisateur null impossible" ,
+					"Affichage d'un utilisateur null impossible" ,TypesTraces.RECHERCHE,TypesTraces.ECHEC,login);
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -217,54 +267,67 @@ public class UtilisateursServices {
 
 	@Transactional(propagation = Propagation.REQUIRED)	
 	public void changePassword(String login, String idUser, String new_pswd){
-		boolean droit = AuthentificationServices.utilVerif(idUser);
-		if(droit){
-			notificationsServices.notifier("Modification du mot de passe de l'utilisateur "+login+".",
-					"Modification mot de passe "+login,TypesTraces.MODIFICATION,TypesTraces.SUCCES,idUser);
+		if(!login.equals("admin")){
+			boolean droit = AuthentificationServices.utilVerif(idUser);
+			if(droit){
+				notificationsServices.notifier("Modification du mot de passe de l'utilisateur "+login+".",
+						"Modification mot de passe "+login,TypesTraces.MODIFICATION,TypesTraces.SUCCES,idUser);
 
-			if (StringUtils.isNotBlank(login)) {
-				Utilisateur temp = entityManager.find(Utilisateur.class, login);
-				temp.setMotDePasse(new_pswd);
+				if (StringUtils.isNotBlank(login)) {
+					Utilisateur temp = entityManager.find(Utilisateur.class, login);
+					temp.setMotDePasse(new_pswd);
+				}
+			}
+			else{
+				notificationsServices.notifier("Impossible de modifier votre mot de passe car vous n'êtes pas dans la base.",
+						"Modification mot de passe impossible / pas dans la base",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
 			}
 		}
 		else{
-			notificationsServices.notifier("Impossible de modifier votre mot de passe car vous n'êtes pas dans la base.",
-					"Modification mot de passe impossible / pas dans la base",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
+			notificationsServices.notifier("Impossible de modifier le mot de passe de l'administrateur",
+					"Modification mot de passe admin impossible",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
 		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED)	
 	public void changeInfos(String login,String idUser,Utilisateur user){
-		boolean auth = AuthentificationServices.utilVerif(idUser);
-		boolean admin = AuthentificationServices.adminVerif(idUser);
 
-		if(auth || admin){
-			log.info("=====> Modification de l'utilisateur de login {}.", login);
-			if (StringUtils.isNotBlank(login)) {
-				Utilisateur temp = entityManager.find(Utilisateur.class, login);
-				if(user.getAdresse()!=null){
-					temp.setAdresse(user.getAdresse());
+		if(!login.equals("admin")){
+			boolean auth = AuthentificationServices.utilVerif(idUser);
+			boolean admin = AuthentificationServices.adminVerif(idUser);
+
+			if(auth || admin){
+				log.info("=====> Modification de l'utilisateur de login {}.", login);
+				if (StringUtils.isNotBlank(login)) {
+					Utilisateur temp = entityManager.find(Utilisateur.class, login);
+					if(user.getAdresse()!=null){
+						temp.setAdresse(user.getAdresse());
+					}
+					if(user.getDateDeNaissance()!=null){
+						temp.setDateDeNaissance(user.getDateDeNaissance());
+					}				
+					if(user.getEmail()!=null){
+						temp.setEmail(user.getEmail());		
+					}		
+					if(user.getPrenom()!=null){
+						temp.setNom(user.getPrenom());
+					}			
+					if(user.getPrenom()!=null){
+						temp.setPrenom(user.getPrenom());
+					}
+					if(user.getProfils()!=null){
+						temp.setProfils(user.getProfils());
+					}
 				}
-				if(user.getDateDeNaissance()!=null){
-					temp.setDateDeNaissance(user.getDateDeNaissance());
-				}				
-				if(user.getEmail()!=null){
-					temp.setEmail(user.getEmail());		
-				}		
-				if(user.getPrenom()!=null){
-					temp.setNom(user.getPrenom());
-				}			
-				if(user.getPrenom()!=null){
-					temp.setPrenom(user.getPrenom());
-				}
-				if(user.getProfils()!=null){
-					temp.setProfils(user.getProfils());
-				}
+			}
+			else{
+				notificationsServices.notifier("Impossible de modifier un utilisateur qui n'est pas vous si vous n'êtes pas administrateur.",
+						"Modification "+login+" impossible / pas admin ou pas lui",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
 			}
 		}
 		else{
-			notificationsServices.notifier("Impossible de modifier un utilisateur qui n'est pas vous si vous n'êtes pas administrateur.",
-					"Modification "+login+" impossible / pas admin ou pas lui",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
+			notificationsServices.notifier("Impossible de modifier les infos de l'administrateur",
+					"Modification infos admin impossible",TypesTraces.MODIFICATION,TypesTraces.ECHEC,idUser);
 		}
 	}
 }

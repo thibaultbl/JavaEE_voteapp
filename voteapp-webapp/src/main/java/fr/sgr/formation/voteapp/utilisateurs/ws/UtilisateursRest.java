@@ -38,29 +38,25 @@ public class UtilisateursRest {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public Utilisateur lire(@PathVariable String login) {
-		log.info("=====> Récupération de l'utilisateur de login {}.", login);
+	public Utilisateur lire(@PathVariable String login, @RequestParam String idUser,@RequestParam String mdp) throws UtilisateurInvalideException {
 
-		return utilisateursServices.rechercherParLogin(login);
+		return utilisateursServices.rechercherParLogin(login,idUser,mdp);
 	}
 	
 	@RequestMapping(value="/list/",method = RequestMethod.GET)
 	public String lireUserProfil(@PathVariable String login, @RequestParam String idUser) {
-		log.info("=====> Récupération des utilisateurs avec le profil {}.", login);
 
 		return utilisateursServices.rechercherUserProfil(login,idUser);
 	}
 	
 	@RequestMapping(value="/mdp",method = RequestMethod.PUT)
 	public void changePassword(@PathVariable String login, @RequestParam String idUser,@RequestBody String new_pswd) throws UtilisateurInvalideException {
-		log.info("=====> Récupération de l'utilisateur de login {}.", login);
 
 		utilisateursServices.changePassword(login,idUser,new_pswd);
 	}
 	
 	@RequestMapping(value="/modif",method = RequestMethod.PUT)
 	public void changeInfos(@PathVariable String login, @RequestParam String idUser,@RequestBody Utilisateur user) throws UtilisateurInvalideException {
-		log.info("=====> Modification de l'utilisateur de login {}.", login);
 
 		utilisateursServices.changeInfos(login,idUser,user);
 	}

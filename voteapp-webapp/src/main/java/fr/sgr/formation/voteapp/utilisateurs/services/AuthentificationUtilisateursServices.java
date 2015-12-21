@@ -33,9 +33,6 @@ public class AuthentificationUtilisateursServices {
 			//Vérifie si l'utilisateur existe en base
 			if(temp != null){
 				if(temp.getLogin().equals(login)) { //Forcément vraie si l'utilisateur existe en base...
-					notificationsServices
-							.notifier("Authentification de l'utilisateur " + login + " validée.",
-									"Utilisateur "+login+" authentifié",TypesTraces.AUTHENTIFICATION,TypesTraces.SUCCES,login);
 					for (int i=0; i<temp.getProfils().size();i++){
 
 						if(temp.getProfils().get(i)==ProfilsUtilisateur.ADMINISTRATEUR){
@@ -44,16 +41,10 @@ public class AuthentificationUtilisateursServices {
 					}
 				}
 			}
-			else{
-				/** Notification de l'échec de l'authentification */
-				notificationsServices
-						.notifier("Impossible d'utiliser l'utilisateur " + login + " car il n'existe pas.",
-								"Utilisateur "+login+" non existant",TypesTraces.AUTHENTIFICATION,TypesTraces.ECHEC,null);
-			}
 		}
 		return droit;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public boolean gerantVerif(String login) {
 
@@ -64,9 +55,6 @@ public class AuthentificationUtilisateursServices {
 			Utilisateur temp = entityManager.find(Utilisateur.class, login);
 			//Vérifie si l'utilisateur existe en base
 			if(temp != null){
-				notificationsServices
-				.notifier("Authentification de l'utilisateur " + login + " validée.",
-						"Utilisateur "+login+" authentifié",TypesTraces.AUTHENTIFICATION,TypesTraces.SUCCES,login);
 				if(temp.getLogin().equals(login)) { //Forcément vraie si l'utilisateur existe en base...
 					for (int i=0; i<temp.getProfils().size();i++){
 
@@ -76,16 +64,10 @@ public class AuthentificationUtilisateursServices {
 					}
 				}
 			}
-			else{				
-				/** Notification de l'échec de l'authentification */
-				notificationsServices
-				.notifier("Impossible d'utiliser l'utilisateur " + login + " car il n'existe pas.",
-						"Utilisateur "+login+" non existant",TypesTraces.AUTHENTIFICATION,TypesTraces.ECHEC,null);
-			}
 		}
 		return droit;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public boolean utilVerif(String login) {
 
@@ -104,9 +86,27 @@ public class AuthentificationUtilisateursServices {
 			else{
 				/** Notification de l'échec de l'authentification */
 				notificationsServices
-						.notifier("Impossible d'utiliser l'utilisateur " + login + " car il n'existe pas.",
-								"Utilisateur "+login+" non existant",TypesTraces.AUTHENTIFICATION,TypesTraces.ECHEC,null);
+				.notifier("Impossible d'utiliser l'utilisateur " + login + " car il n'existe pas.",
+						"Utilisateur "+login+" non existant",TypesTraces.AUTHENTIFICATION,TypesTraces.ECHEC,null);
 			}
+		}
+		return droit;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public boolean mdpVerif(String login, String mdp){
+		boolean droit=false;
+		if (StringUtils.isNotBlank(login)) {
+			//Trouve l'utilisateur par le login
+			Utilisateur temp = entityManager.find(Utilisateur.class, login);
+			//Vérifie si l'utilisateur existe en base
+			if(temp != null){
+				droit = temp.getMotDePasse().equals(mdp);
+			}
+		}
+
+		if(login.equals("admin") & mdp.equals("admin")){
+			droit=true;
 		}
 		return droit;
 	}

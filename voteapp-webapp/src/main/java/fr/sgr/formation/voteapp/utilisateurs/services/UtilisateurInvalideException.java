@@ -33,7 +33,9 @@ public class UtilisateurInvalideException extends Exception {
 		LOGIN_OBLIGATOIRE("Le login est obligatoire."),
 		MDP_OBLIGATOIRE("Le mot de passe est obligatoire."),
 		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système."),
-		UTILISATEUR_INEXISTANT("L'utilisateur n'existe pas");
+		UTILISATEUR_INEXISTANT("L'utilisateur n'existe pas"),
+		UTILISATEUR_IMPOSSIBLE("Un tel nom d'utilisateur n'est pas possible."),
+		MAUVAIS_MDP("Vous avez entré un mauvais mot de passe");
 
 		@Getter
 		public String message;

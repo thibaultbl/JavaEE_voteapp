@@ -109,7 +109,15 @@ public class Initialisation {
 		vote1.setElection(elec);
 		vote1.setUtilisateur(admin);
 		votes.add(vote1);
-		voteServices.creer(elec.getTitre(), "oui", admin.getLogin());
+
+
+		try {
+			voteServices.creer(elec.getTitre(), "oui", admin.getLogin());
+		} catch (UtilisateurInvalideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 
 		/*
 		 * try { electionServices.creer(elec, "jean");
@@ -119,9 +127,9 @@ public class Initialisation {
 		 * 
 		 * } catch (ElectionInvalideException e) {
 		 *//** Then: Alors une exception est levée. *//*
-														 * e.printStackTrace();
-														 * }
-														 */
+		 * e.printStackTrace();
+		 * }
+		 */
 
 	}
 }

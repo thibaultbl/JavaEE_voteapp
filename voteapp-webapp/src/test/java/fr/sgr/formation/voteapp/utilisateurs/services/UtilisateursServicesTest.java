@@ -49,7 +49,7 @@ public class UtilisateursServicesTest {
 		Utilisateur utilisateur = Utilisateur.builder().login(RandomStringUtils.random(10)).build();
 		/* Et que l'utilisateur existe sur le système */
 		UtilisateursServices spy = Mockito.spy(services);
-		Mockito.doReturn(utilisateur).when(spy).rechercherParLogin(utilisateur.getLogin());
+		Mockito.doReturn(utilisateur).when(spy).rechercherParLogin(utilisateur.getLogin(),"admin","admin");
 
 		try {
 			/** Lorsqu'on appelle le service de création. */
@@ -61,7 +61,7 @@ public class UtilisateursServicesTest {
 			 * Alors le service de vérification de l'existance de l'utilsiateur
 			 * est appelé.
 			 */
-			Mockito.verify(spy).rechercherParLogin(utilisateur.getLogin());
+			Mockito.verify(spy).rechercherParLogin(utilisateur.getLogin(),"admin","admin");
 
 			/* Et une exception est levée. */
 			Assert.assertEquals(UtilisateurInvalideException.ErreurUtilisateur.UTILISATEUR_EXISTANT, e.getErreur());

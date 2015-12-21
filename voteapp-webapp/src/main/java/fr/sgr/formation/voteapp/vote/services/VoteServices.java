@@ -12,6 +12,7 @@ import fr.sgr.formation.voteapp.elections.modele.Election;
 import fr.sgr.formation.voteapp.elections.services.ElectionsServices;
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
+import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
 import fr.sgr.formation.voteapp.vote.modele.ChoixVote;
 import fr.sgr.formation.voteapp.vote.modele.Vote;
@@ -44,16 +45,17 @@ public class VoteServices {
 	 * @return Vote créée.
 	 * @throws VoteInvalideException
 	 *             Levée si l'election est invalide.
+	 * @throws UtilisateurInvalideException 
 	 */
 
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Vote creer(String titre, String choix, String idUser) throws VoteInvalideException {
+	public Vote creer(String titre, String choix, String idUser) throws VoteInvalideException, UtilisateurInvalideException {
 
 		log.info("=====> Création du vote pour l'élection : {}.", titre);
 		Query query = entityManager.createNativeQuery("SELECT login FROM UTILISATEUR where login=?");
 		query.setParameter(1, idUser);
 
-		if (utilisateursServices.rechercherParLogin(query.getSingleResult().toString()) == null) {
+		if (utilisateursServices.rechercherParLogin(query.getSingleResult().toString(),"admin","admin") == null) {
 			throw new VoteInvalideException(ErreurVote.UTILISATEUR_NON_ENREGISTRE);
 		}
 
@@ -66,7 +68,7 @@ public class VoteServices {
 			throw new VoteInvalideException(ErreurVote.CHOIX_NON_AUTORISE);
 		}
 
-		vote.setUtilisateur(utilisateursServices.rechercherParLogin(idUser));
+		vote.setUtilisateur(utilisateursServices.rechercherParLogin(idUser,"admin","admin"));
 
 		Query query2 = entityManager.createNativeQuery("SELECT titre FROM ELECTION WHERE titre=?");
 		query2.setParameter(1, titre);

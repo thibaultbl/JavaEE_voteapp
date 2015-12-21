@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fr.sgr.formation.voteapp.elections.services.ElectionInvalideException;
 import fr.sgr.formation.voteapp.elections.services.ElectionsServices;
+import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateursServices;
 import fr.sgr.formation.voteapp.vote.modele.Vote;
 import fr.sgr.formation.voteapp.vote.services.VoteInvalideException;
@@ -34,7 +35,7 @@ public class VoteRest {
 
 	@RequestMapping(method = RequestMethod.PUT)
 	public void creer(@PathVariable String titre, @RequestBody String choix, @RequestParam String idUser)
-			throws VoteInvalideException {
+			throws VoteInvalideException, UtilisateurInvalideException{
 
 		log.info("=====> Création du vote pour l'élection {}.", titre);
 		votesServices.creer(titre, choix, idUser);
