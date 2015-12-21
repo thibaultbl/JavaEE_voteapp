@@ -35,7 +35,8 @@ public class UtilisateurInvalideException extends Exception {
 		UTILISATEUR_EXISTANT("Un utilisateur de même login existe déjà sur le système."),
 		UTILISATEUR_INEXISTANT("L'utilisateur n'existe pas"),
 		UTILISATEUR_IMPOSSIBLE("Un tel nom d'utilisateur n'est pas possible."),
-		MAUVAIS_MDP("Vous avez entré un mauvais mot de passe");
+		MAUVAIS_MDP("Vous avez entré un mauvais mot de passe"),
+		PAS_DROIT("Vous n'avez pas les droits pour effectuer cette action.");
 
 		@Getter
 		public String message;

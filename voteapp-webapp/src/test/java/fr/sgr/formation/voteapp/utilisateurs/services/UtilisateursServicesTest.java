@@ -34,7 +34,7 @@ public class UtilisateursServicesTest {
 	public void creerUtilisateurNul() {
 		try {
 			/** When: Lorsqu'on appel le service de création */
-			services.creer(null);
+			services.creer(null,"admin");
 
 			fail("Une exception devrait être levée.");
 		} catch (UtilisateurInvalideException e) {
@@ -53,7 +53,7 @@ public class UtilisateursServicesTest {
 
 		try {
 			/** Lorsqu'on appelle le service de création. */
-			spy.creer(utilisateur);
+			spy.creer(utilisateur,"admin");
 
 			fail("Une exception devrait être levée.");
 		} catch (UtilisateurInvalideException e) {
@@ -74,7 +74,7 @@ public class UtilisateursServicesTest {
 		Utilisateur utilisateur = new Utilisateur();
 
 		/** Lorsqu'on appelle le service de création. */
-		services.creer(utilisateur);
+		services.creer(utilisateur,"admin");
 
 		/** Alors le service de validation est appelé. */
 		Mockito.verify(validationServices).validerUtilisateur(utilisateur);
@@ -90,7 +90,7 @@ public class UtilisateursServicesTest {
 
 		try {
 			/** Lorsqu'on appelle le service de création. */
-			services.creer(utilisateur);
+			services.creer(utilisateur,"admin");
 
 			fail("Une exception est attendue.");
 		} catch (UtilisateurInvalideException e) {
@@ -112,7 +112,7 @@ public class UtilisateursServicesTest {
 		Mockito.when(entityManager.find(Utilisateur.class, utilisateur.getLogin())).thenReturn(null);
 
 		/** Lorsqu'on appelle le service de création. */
-		services.creer(utilisateur);
+		services.creer(utilisateur,"admin");
 	}
 
 }

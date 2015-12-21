@@ -24,11 +24,11 @@ public class UtilisateursRest {
 	private UtilisateursServices utilisateursServices;
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public void creer(@PathVariable String login, @RequestBody Utilisateur utilisateur)
+	public void creer(@PathVariable String login,@RequestParam String idUser, @RequestBody Utilisateur utilisateur)
 			throws UtilisateurInvalideException {
 		log.info("=====> Création ou modification de l'utilisateur de login {}: {}.", login, utilisateur);
 		utilisateur.setLogin(login);
-		utilisateursServices.creer(utilisateur);
+		utilisateursServices.creer(utilisateur,idUser);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)

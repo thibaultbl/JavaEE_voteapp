@@ -87,7 +87,7 @@ public class Initialisation {
 
 		villeService.creer(rennes);
 		try {
-			us.creer(admin);
+			us.creer(admin,"admin");
 		} catch (UtilisateurInvalideException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

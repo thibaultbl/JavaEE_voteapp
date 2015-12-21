@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.sgr.formation.voteapp.notifications.services.NotificationsServices;
 import fr.sgr.formation.voteapp.traces.modele.TypesTraces;
+import fr.sgr.formation.voteapp.utilisateurs.modele.ProfilsUtilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.modele.Utilisateur;
 import fr.sgr.formation.voteapp.utilisateurs.services.UtilisateurInvalideException.ErreurUtilisateur;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,7 @@ public class UtilisateursServices {
 	 *             Levée si l'utilisateur est invalide.
 	 */
 	@Transactional(propagation = Propagation.REQUIRED)
-	public Utilisateur creer(Utilisateur utilisateur) throws UtilisateurInvalideException {
+	public Utilisateur creer(Utilisateur utilisateur, String idUser) throws UtilisateurInvalideException {
 
 		if (utilisateur == null) {
 			/** Notification de l'événement de création */
@@ -78,6 +79,14 @@ public class UtilisateursServices {
 					"login"+utilisateur.getLogin()+" impossible",TypesTraces.CREATION,TypesTraces.ECHEC,utilisateur.getLogin());
 			throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_IMPOSSIBLE);
 		}
+		
+		boolean admin = AuthentificationServices.adminVerif(idUser);
+		if(!admin){
+				/** Notification de l'événement de création */
+				notificationsServices.notifier("Impossible de créer un utilisateur si vous n'etes pas administrateur" ,
+						"Création d'utilisateur impossible si pas admin",TypesTraces.CREATION,TypesTraces.ECHEC,utilisateur.getLogin());
+				throw new UtilisateurInvalideException(ErreurUtilisateur.PAS_DROIT);
+		}
 
 		/**
 		 * Validation de l'utilisateur: lève une exception si l'utilisateur est
@@ -95,6 +104,7 @@ public class UtilisateursServices {
 
 		return utilisateur;
 	}
+
 
 	/**
 	 * Retourne l'utilisateur identifié par le login.
@@ -116,21 +126,7 @@ public class UtilisateursServices {
 					/** Notification de l'événement de recherche */
 					notificationsServices.notifier("Affichage des infos de : " + login,
 							"Affichage des infos de : " + login,TypesTraces.RECHERCHE,TypesTraces.SUCCES,login);
-					Utilisateur temp =  entityManager.find(Utilisateur.class, login);
-					if (temp!=null){
-						return temp;
-					}
-					else{
-						if(login.equals("admin")){
-							return null;
-						}
-						else{
-							
-						}
-						notificationsServices.notifier("L'utilisateur" + login+ " n'existe pas." ,
-								"L'utilisateur" + login+ " n'existe pas.",TypesTraces.RECHERCHE,TypesTraces.ECHEC,login);
-						throw new UtilisateurInvalideException(ErreurUtilisateur.UTILISATEUR_INEXISTANT);
-					}
+					return entityManager.find(Utilisateur.class, login);
 				}
 				else{
 					notificationsServices.notifier("Affichage des infos de " + login+ " impossible : mauvais mot de passe." ,
