@@ -291,7 +291,7 @@ public class UtilisateursServices {
 
 	@Transactional(propagation = Propagation.REQUIRED)	
 	public void changeInfos(String login,String idUser,Utilisateur user){
-
+		user.setLogin(login);
 		if(!login.equals("admin")){
 			boolean auth = login.equals(idUser);
 			boolean admin = AuthentificationServices.adminVerif(idUser);
@@ -315,8 +315,10 @@ public class UtilisateursServices {
 					if(user.getPrenom()!=null){
 						temp.setPrenom(user.getPrenom());
 					}
-					if(user.getProfils()!=null){
-						temp.setProfils(user.getProfils());
+					if(admin){
+						if(user.getProfils()!=null){
+							temp.setProfils(user.getProfils());
+						}
 					}
 				}
 			}
