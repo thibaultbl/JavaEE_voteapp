@@ -293,7 +293,7 @@ public class UtilisateursServices {
 	public void changeInfos(String login,String idUser,Utilisateur user){
 
 		if(!login.equals("admin")){
-			boolean auth = AuthentificationServices.utilVerif(idUser);
+			boolean auth = login.equals(idUser);
 			boolean admin = AuthentificationServices.adminVerif(idUser);
 
 			if(auth || admin){
